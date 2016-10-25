@@ -6,6 +6,7 @@ import { MaterialModule } from '@angular/material';
 import { ReservationsComponent } from './reservations.component';
 
 import { CampaignService } from './campaign.service';
+import { ReservationService } from './reservation.service';
 
 @NgModule({
     imports: [
@@ -18,7 +19,8 @@ import { CampaignService } from './campaign.service';
     ],
     exports: [ ReservationsComponent ],
     providers: [
-        CampaignService
+        CampaignService,
+        ReservationService
     ]
 })
 export class ReservationsModule { }

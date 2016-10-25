@@ -22,5 +22,6 @@ export class CampaignService {
     getTicketTypes(): Observable<Product2[]> {
         return this.http.get(this.currentProductionUrl)
             .map(response => response.json().data.products as Product2[]);
+        // TODO: Catch errors
     }
 }

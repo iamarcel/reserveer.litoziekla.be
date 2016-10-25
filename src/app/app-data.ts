@@ -73,7 +73,8 @@ export class AppData implements InMemoryDbService {
                 'campaign': currentProduction,
                 'products': ticketTypes
             },
-            'record-types': recordTypes
+            'record-types': recordTypes,
+            'reservation': []
         };
 
     }

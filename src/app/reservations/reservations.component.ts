@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
+import { Account } from './models/account';
 import { Contact } from './models/contact';
 import { Product2 } from './models/product2';
 import { OpportunityLineItem } from './models/opportunity-line-item';
 
 import { CampaignService } from './campaign.service';
+import { ReservationService, Reservation, Ticket } from './reservation.service';
 
 @Component({
     selector: 'app-reservations',
@@ -16,28 +18,52 @@ export class ReservationsComponent {
 
     private production: Campaign;
     private show: Campaign;
-    private opportunity: Opportunity = new Opportunity({});;
-    private contact: Contact = new Contact({});
+    private reservation: Reservation = new Reservation();
 
-    private ticketTypes: Product2[];
-    private tickets: Ticket[];
+    private loading: number = 0;
+    private submitting: boolean = false;
+    private submitted: boolean = false;
 
-    constructor(private campaignService: CampaignService) {
+    constructor(private campaignService: CampaignService,
+                private reservationService: ReservationService) {
+
+        this.loading++;
         campaignService.getCurrentProduction()
-            .subscribe(production => this.production = production);
+            .subscribe(production => {
+                this.production = production;
+                this.loading--;
+            });
+
+        this.loading++;
         campaignService.getTicketTypes()
-            // .map(ticketTypes => ) // TODO Map each element to a Ticket
-            .subscribe(ticketTypes => this.ticketTypes = ticketTypes);
+            .map((tts: Product2[]) =>
+                 tts.map(t => new Ticket({ticketType: t}))
+                )
+            .subscribe(tickets => {
+                this.reservation.Tickets = tickets;
+                this.loading--;
+            });
+
     }
 
     setShow(show: Campaign) {
         this.show = show;
-        this.opportunity.CampaignId = show.Id;
+        this.reservation.CampaignId = show.Id;
     }
 
-}
+    submit() {
+        this.loading++;
+        this.submitting = true;
+        this.reservationService.put(this.reservation)
+            .subscribe((result: any) => {
+                this.submitted = true;
+                this.submitting = false;
+                this.loading--;
 
-interface Ticket {
-    ticketType: Product2;
-    amount: number;
+                console.log(result);
+
+                this.reservation = new Reservation();
+            });
+    }
+
 }

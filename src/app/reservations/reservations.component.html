@@ -1,15 +1,15 @@
-
+<md-progress-bar mode="indeterminate" *ngIf="loading > 0"></md-progress-bar>
 <div *ngIf="production">
 
     <h2>
         Reserveren voor {{ production.Name }}
     </h2>
 
-    <md-nav-list>
+    <md-nav-list *ngIf="!show">
         <a md-list-item href="#"
            (click)="setShow(show)"
            *ngFor="let show of production.Campaigns">
-            <h3 md-line>{{ show.StartDate | date:medium }}</h3>
+            <h3 md-line>{{ show.StartDate | date:'fullDate' }}</h3>
             <p md-line>
                 {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
             </p>
@@ -17,39 +17,56 @@
     </md-nav-list>
 
     <div *ngIf="show" >
-        <h2>Nieuwe reservatie</h2>
-        <p>{{show.StartDate | date:long}}</p>
-        <form>
+        <p>
+            Je bent tickets aan het reserveren voor
+            {{ show.StartDate | date:'fullDate' }}
+        </p>
+        <form (ngSubmit)="submit()" *ngIf="!submitted">
+            <h3>Jouw gegevens</h3>
             <md-input type="text" placeholder="Voornaam"
                       name="first-name"
-                      [(ngModel)]="contact.FirstName"></md-input>
+                      [(ngModel)]="reservation.FirstName"></md-input>
             <md-input type="text" placeholder="Achternaam"
-                      name="last-name"
-                      [(ngModel)]="contact.LastName"></md-input>
+                      name="last-name" required
+                      [(ngModel)]="reservation.LastName"></md-input>
 
             <md-input type="email" placeholder="E-mailadres"
-                      name="email"
-                      [(ngModel)]="contact.Email"></md-input>
+                      name="email" required
+                      [(ngModel)]="reservation.Email"></md-input>
             <md-input type="tel" placeholder="Telefoonnummer"
                       name="phone"
-                      [(ngModel)]="contact.Phone"></md-input>
+                      [(ngModel)]="reservation.Phone"></md-input>
 
-            <div *ngIf="ticketTypes">
+            <div *ngIf="reservation.Tickets">
                 <h3>Tickets</h3>
-                <md-nav-list>
-                    <a md-list-item href="#"
-                       *ngFor="let ticketType of ticketTypes">
-                        <h4 md-line>{{ ticketType.Name }} ({{ ticketType.DefaultPrice | currency:"EUR":true }})</h4>
+                <md-list>
+                    <md-list-item
+                       *ngFor="let ticket of reservation.Tickets">
+                        <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.DefaultPrice | currency:"EUR":true }})</h4>
                         <p md-line>
-                            <a href="#" (click)=""><md-icon>remove_circle_outline</md-icon></a>
-                            {{ 0 }}
-                            <a href="#" (click)=""><md-icon>add_circle_outline</md-icon></a>
+                            <a href="#" (click)="ticket.amount = ticket.amount - 1"
+                               class="icon">
+                                <md-icon class="inline-icon">remove_circle_outline</md-icon>
+                            </a>
+                            <span>{{ ticket.amount }}</span>
+                            <a href="#" (click)="ticket.amount = ticket.amount + 1"
+                               class="icon">
+                                <md-icon class="inline-icon">add_circle_outline</md-icon>
+                            </a>
                         </p>
-                    </a>
-                </md-nav-list>
+                    </md-list-item>
+                </md-list>
             </div>
-        </form>
-    </div>
 
+            <button type="submit"
+                    [disabled]=""
+                    md-button color="primary">RESERVEER</button>
+        </form>
+
+        <div *ngIf="submitted">
+            <p>Klaar! Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
+        </div>
+
+    </div>
 
 </div>
