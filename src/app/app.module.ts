@@ -25,7 +25,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     ReservationsModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'nl-BE' }
+    { provide: LOCALE_ID, useValue: 'nl' }
   ],
   bootstrap: [AppComponent]
 })
