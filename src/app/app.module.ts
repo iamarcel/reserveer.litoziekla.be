@@ -19,7 +19,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     BrowserModule,
     FormsModule,
     HttpModule,
-    InMemoryWebApiModule.forRoot(AppData),
+    // InMemoryWebApiModule.forRoot(AppData),
     MaterialModule.forRoot(),
 
     ReservationsModule
