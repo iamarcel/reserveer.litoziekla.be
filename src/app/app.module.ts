@@ -8,6 +8,7 @@ import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { AppData } from './app-data';
 
 import { AppComponent } from './app.component';
+import { ApiService } from './api.service';
 
 import { ReservationsModule } from './reservations/reservations.module';
 
@@ -25,8 +26,10 @@ import { ReservationsModule } from './reservations/reservations.module';
     ReservationsModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'nl' }
+      { provide: LOCALE_ID, useValue: 'nl' },
+      ApiService
   ],
+  exports: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

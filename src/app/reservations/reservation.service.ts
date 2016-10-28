@@ -8,7 +8,7 @@ import { Product2 } from './models/product2';
 @Injectable()
 export class ReservationService {
 
-    private submitReservationUrl = 'app/reservation';
+    private submitReservationUrl = 'api/v1/reservations';
 
     constructor(private http: Http) { }
 

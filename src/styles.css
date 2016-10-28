@@ -11,3 +11,12 @@ a.icon {
     height: 1em;
     font-size: 1em;
 }
+
+.hero img {
+    display: block;
+    width: 100%;
+}
+
+form md-input {
+    width: 100%;
+}

@@ -5,7 +5,12 @@
         Reserveren voor {{ production.Name }}
     </h2>
 
+    <div class="hero" [innerHTML]="production.Hero_Image__c">
+        Laden...
+    </div>
+
     <md-nav-list *ngIf="!show">
+        <h3>Kies een voorstelling</h3>
         <a md-list-item href="#"
            (click)="setShow(show)"
            *ngFor="let show of production.Campaigns">
@@ -19,7 +24,7 @@
     <div *ngIf="show" >
         <p>
             Je bent tickets aan het reserveren voor
-            {{ show.StartDate | date:'fullDate' }}
+            {{ show.StartDate | date:'fullDate' }}.
         </p>
         <form (ngSubmit)="submit()" *ngIf="!submitted">
             <h3>Jouw gegevens</h3>

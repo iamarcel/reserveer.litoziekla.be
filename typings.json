@@ -5,6 +5,7 @@
   "globalDependencies": {
     "core-js": "registry:dt/core-js#0.0.0+20160914114559",
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
+    "jsforce": "github:celador/typed-jsforce",
     "node": "registry:dt/node#6.0.0+20161019125345"
   }
 }
