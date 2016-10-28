@@ -13,7 +13,7 @@
         <h3>Kies een voorstelling</h3>
         <a md-list-item href="#"
            (click)="setShow(show)"
-           *ngFor="let show of production.Campaigns">
+           *ngFor="let show of production.ChildCampaigns.records">
             <h3 md-line>{{ show.StartDate | date:'fullDate' }}</h3>
             <p md-line>
                 {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen

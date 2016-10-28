@@ -30,6 +30,7 @@ export class ReservationsComponent {
         this.loading++;
         campaignService.getCurrentProduction()
             .subscribe(production => {
+                console.log('Got the production', production);
                 this.production = production;
                 this.loading--;
             });
@@ -40,6 +41,7 @@ export class ReservationsComponent {
                  tts.map(t => new Ticket({ticketType: t}))
                 )
             .subscribe(tickets => {
+                console.log('Got ticket types', tickets);
                 this.reservation.Tickets = tickets;
                 this.loading--;
             });

@@ -1,11 +1,12 @@
 {
   "dependencies": {
-    "express": "registry:npm/express#4.14.0+20160925001530"
+    "body-parser": "registry:npm/body-parser#1.15.2+20160815132839",
+    "express": "registry:npm/express#4.14.0+20160925001530",
+    "jsforce": "github:iamarcel/typed-jsforce"
   },
   "globalDependencies": {
     "core-js": "registry:dt/core-js#0.0.0+20160914114559",
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
-    "jsforce": "github:celador/typed-jsforce",
     "node": "registry:dt/node#6.0.0+20161019125345"
   }
 }

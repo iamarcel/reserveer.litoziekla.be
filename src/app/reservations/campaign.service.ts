@@ -12,21 +12,23 @@ import { Product2 } from './models/product2';
 export class CampaignService {
 
     private currentProductionUrl: string;
+    private ticketsUrl: string;
 
     constructor(private http: Http,
                 private apiService: ApiService) {
         this.currentProductionUrl = apiService.baseUrl + 'current/productions';
+        this.ticketsUrl = apiService.baseUrl + 'current/productions/tickets';
     }
 
     getCurrentProduction(): Observable<Campaign> {
         return this.http.get(this.currentProductionUrl)
-            .map(response => response.json().campaign as Campaign);
+            .map(response => response.json() as Campaign);
             // TODO: Catch errors
     }
 
     getTicketTypes(): Observable<Product2[]> {
-        return this.http.get(this.currentProductionUrl)
-            .map(response => response.json().products as Product2[]);
+        return this.http.get(this.ticketsUrl)
+            .map(response => response.json() as Product2[]);
         // TODO: Catch errors
     }
 }
