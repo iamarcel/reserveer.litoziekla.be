@@ -10,11 +10,18 @@ const SETTINGS = require('./settings.json');
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/observable/bindNodeCallback';
+import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/last';
-import 'rxjs/add/operator/forkJoin';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
 
 import { AppData } from '../src/app/app-data';
+import { Account } from '../src/app/reservations/models/account';
+import { Contact } from '../src/app/reservations/models/contact';
+import { Campaign } from '../src/app/reservations/models/campaign';
+import { Reservation } from '../src/app/reservations/reservation.service';
 
 
 
@@ -55,28 +62,47 @@ const productions = Observable.create((observer: Observer<any>) => {
             .limit(1)
             .execute((err, records) => {
                 if (err) {
-                    console.error(err);
                     return observer.error(err);
                 }
                 observer.next(records[0]);
                 observer.complete();
             });
     });
-});
+})
+    .map((campaign: Campaign) => {
+        let heroContent = campaign.Hero_Image__c;
+        campaign.Hero_Image__c = heroContent.replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
+
+        return campaign;
+    });
 productions.subscribe(result => console.log('[LOG] Cached current production.'),
                       err => console.error('[ERROR] while caching production:\n', err));
 
-const PRICEBOOK2_FIELDS = '';
+const PRICEBOOKENTRY_FIELDS = 'Id,Name,Pricebook2Id,Product2Id,'
+    + 'UnitPrice,UseStandardPrice,'
+    + 'Product2.Id,Product2.Description,Product2.Name';
 const products = Observable.create((observer: Observer<any>) => {
-    Observable.fork
-    login.last().subscribe(_ => {
-        console.log('[LOG] Caching products...');
-        (connection as any).sobject('PricebookEntry')
-            .find({
-                'Pricebook2Id': '' // TODO Get Default_Pricebook__c from Campaign
-            }, PRICEBOOK2_FIELDS);
-    });
-});
+    Observable
+        .forkJoin(login, productions)
+        .subscribe((results: any) => {
+            console.log('[LOG] Caching products...');
+
+            let campaign: Campaign = results[1];
+            (connection as any).sobject('PricebookEntry')
+                .find({
+                    'Pricebook2Id': campaign.DefaultPricebook2__c
+                }, PRICEBOOKENTRY_FIELDS)
+                .execute((err, records) => {
+                    if (err) {
+                        return observer.error(err);
+                    }
+                    observer.next(records);
+                    observer.complete();
+                });
+        });
+})
+products.subscribe(result => console.log('[LOG] Cached products.'),
+                   err => console.error('[ERROR] while caching products:\n', err));
 
 
 
@@ -85,8 +111,6 @@ const products = Observable.create((observer: Observer<any>) => {
 export const app = express();
 app.use(bodyParser.json());
 
-app.use(express.static(__dirname + '/../dist'));
-
 let appData = new AppData();
 const mockData = appData.createDb();
 app.get('/api/v1/current/productions', (req, res) => {
@@ -94,7 +118,7 @@ app.get('/api/v1/current/productions', (req, res) => {
 });
 
 app.get('/api/v1/current/productions/tickets', (req, res) => {
-    res.json(mockData['current-production']['products']);
+    products.last().subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/recordTypes', (req, res) => {
@@ -102,7 +126,57 @@ app.get('/api/v1/recordTypes', (req, res) => {
 });
 
 app.post('/api/v1/reservations', (req, res) => {
-    console.dir(req.body);
+    let reservation: Reservation = req.body;
+
+    // Try to find a contact first
+    const foundContact = Observable.create((observer: Observer<Contact[]>) => {
+        (connection as any)
+            .sobject('Contact')
+            .find({
+                Email: reservation.Email
+            })
+            .limit(1)
+            .execute((err, results) => {
+                if (err) return observer.error(err);
+                observer.next(results);
+                observer.complete();
+            })
+    })
+        .last()
+        .switchMap((contacts: any, index) => {
+            console.dir(contacts);
+            if (contacts.length === 1) {
+                return Observable.of(contacts[0]);
+            }
+
+            return Observable.fromPromise((connection as any)
+                                          .sobject('Account')
+                                          .create({
+                                              Name: reservation.LastName,
+                                              Description: 'Aangemaakt tijdens een reservatie, door Libo.'
+                                          })
+                                          .catch(err => {
+                                              console.error('[ERROR] When making account');
+                                              console.dir(err);
+                                          })
+                                              .then((result) => {
+                                                  console.log('[LOG] Created new account for new contact.');
+                                                  return (connection as any)
+                                                      .sobject('Contact')
+                                                      .create({
+                                                          AccountId: result.id,
+                                                          FirstName: reservation.FirstName || '',
+                                                          LastName: reservation.LastName,
+                                                          Email: reservation.Email,
+                                                          Phone: reservation.Phone || ''
+                                                      });
+                                              }));
+        });
+
+    foundContact.subscribe(contact => {
+        console.log('[NICE] Resolved contact.');
+        console.dir(contact);
+    });
 });
 
 app.listen(PORT, _ => {

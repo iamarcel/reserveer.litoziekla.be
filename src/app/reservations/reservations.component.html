@@ -47,7 +47,8 @@
                 <md-list>
                     <md-list-item
                        *ngFor="let ticket of reservation.Tickets">
-                        <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.DefaultPrice | currency:"EUR":true }})</h4>
+                        <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
+                        <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
                         <p md-line>
                             <a href="#" (click)="ticket.amount = ticket.amount - 1"
                                class="icon">
