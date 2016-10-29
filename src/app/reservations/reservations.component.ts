@@ -6,9 +6,10 @@ import { Account } from './models/account';
 import { Contact } from './models/contact';
 import { Product2 } from './models/product2';
 import { OpportunityLineItem } from './models/opportunity-line-item';
+import { Reservation, Ticket } from './models/reservation';
 
 import { CampaignService } from './campaign.service';
-import { ReservationService, Reservation, Ticket } from './reservation.service';
+import { ReservationService } from './reservation.service';
 
 @Component({
     selector: 'app-reservations',
@@ -48,7 +49,15 @@ export class ReservationsComponent {
 
     }
 
+    showIsFull(show: Campaign) {
+        return show.NumberOfProducts__c >= show.MaximumProducts__c;
+    }
+
     setShow(show: Campaign) {
+        if (this.showIsFull(show)) {
+            return;
+        }
+
         this.show = show;
         this.reservation.CampaignId = show.Id;
     }

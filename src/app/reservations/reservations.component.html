@@ -14,9 +14,12 @@
         <a md-list-item href="#"
            (click)="setShow(show)"
            *ngFor="let show of production.ChildCampaigns.records">
-            <h3 md-line>{{ show.StartDate | date:'fullDate' }}</h3>
-            <p md-line>
+            <h3 md-line>{{ show.Entrance__c }}</h3>
+            <p md-line *ngIf="!showIsFull(show)">
                 {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+            </p>
+            <p md-line *ngIf="showIsFull(show)">
+                Sorry, volzet!
             </p>
         </a>
     </md-nav-list>

@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { PricebookEntry } from './models/pricebook-entry';
+import { Reservation } from './models/reservation';
 
 @Injectable()
 export class ReservationService {
@@ -20,26 +20,3 @@ export class ReservationService {
 
 }
 
-export class Reservation {
-
-    public FirstName: string;
-    public LastName: string;
-    public Email: string;
-    public Phone: string;
-
-    public CampaignId: string;
-    public Tickets: Ticket[];
-
-    constructor() { }
-
-}
-
-export class Ticket {
-
-    public ticketType: PricebookEntry;
-    public amount: number = 0;
-
-    constructor(values: Object) {
-        Object.assign(this, values);
-    }
-}

@@ -11,6 +11,7 @@ export class Campaign {
     public Location__c: string;
     public RecordTypeId: string;
     public DefaultPricebook2__c: string;
+    public Entranct__c: string;
 
     public ChildCampaigns: Campaign[];
 
