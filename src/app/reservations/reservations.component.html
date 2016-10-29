@@ -24,10 +24,10 @@
         </a>
     </md-nav-list>
 
-    <div *ngIf="show" >
+    <div *ngIf="show">
         <p>
             Je bent tickets aan het reserveren voor
-            {{ show.StartDate | date:'fullDate' }}.
+            {{ show.Entrance__c }}.
         </p>
         <form (ngSubmit)="submit()" *ngIf="!submitted">
             <h3>Jouw gegevens</h3>
@@ -78,4 +78,11 @@
 
     </div>
 
+</div>
+
+<div *ngIf="sponsors">
+    <h2>Met dank aan onze sponsors</h2>
+    <p>Zij maakten deze productie mogelijk!</p>
+
+    <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c"></div>
 </div>

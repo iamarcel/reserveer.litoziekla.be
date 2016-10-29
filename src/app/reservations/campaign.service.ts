@@ -6,6 +6,7 @@ import { ApiService } from '../api.service';
 import { Observable } from 'rxjs/Observable';
 
 import { Campaign } from './models/campaign';
+import { Opportunity } from './models/opportunity';
 import { Product2 } from './models/product2';
 
 @Injectable()
@@ -13,11 +14,13 @@ export class CampaignService {
 
     private currentProductionUrl: string;
     private ticketsUrl: string;
+    private sponsorsUrl: string;
 
     constructor(private http: Http,
                 private apiService: ApiService) {
         this.currentProductionUrl = apiService.baseUrl + 'current/productions';
         this.ticketsUrl = apiService.baseUrl + 'current/productions/tickets';
+        this.sponsorsUrl = apiService.baseUrl + 'current/productions/sponsors';
     }
 
     getCurrentProduction(): Observable<Campaign> {
@@ -30,5 +33,10 @@ export class CampaignService {
         return this.http.get(this.ticketsUrl)
             .map(response => response.json() as Product2[]);
         // TODO: Catch errors
+    }
+
+    getSponsors(): Observable<Opportunity[]> {
+        return this.http.get(this.sponsorsUrl)
+            .map(response => response.json() as Opportunity[]);
     }
 }

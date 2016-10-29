@@ -20,6 +20,7 @@ export class ReservationsComponent {
     private production: Campaign;
     private show: Campaign;
     private reservation: Reservation = new Reservation();
+    private sponsors: Opportunity[];
 
     private loading: number = 0;
     private submitting: boolean = false;
@@ -46,6 +47,13 @@ export class ReservationsComponent {
                 this.reservation.Tickets = tickets;
                 this.loading--;
             });
+
+        this.loading++;
+        campaignService.getSponsors()
+            .subscribe(sponsors => {
+                this.sponsors = sponsors;
+                this.loading--;
+            })
 
     }
 

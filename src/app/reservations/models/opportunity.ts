@@ -8,6 +8,7 @@ export class Opportunity {
     public CloseDate: Date;
     public StageName: String;
     public TotalOpportunityQuantity: Number;
+    public Logo__c?: string;
 
     constructor(initializer: any) {
         Object.assign(this, initializer);

@@ -25,6 +25,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/cache';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/toArray';
 
 import { AppData } from '../src/app/app-data';
 import { Account } from '../src/app/reservations/models/account';
@@ -35,6 +36,7 @@ import { Reservation } from '../src/app/reservations/models/reservation';
 
 import { resolveContact } from './resolve-contact';
 import { addOpportunityItems } from './add-opportunity-items';
+import { getSponsors } from './get-sponsors';
 
 
 
@@ -117,7 +119,12 @@ const productsObservable = production
     });
 const products = productsObservable.last().cache(1);
 products.subscribe(result => console.log('[LOG] Products updated.'),
-                          err => console.error('[ERROR] while caching products:\n', err));
+                   err => console.error('[ERROR] while caching products:\n', err));
+
+const sponsors = Observable.forkJoin(login, production)
+    .mergeMap(getSponsors)
+    .toArray()
+    .last().cache(1);
 
 
 
@@ -134,6 +141,10 @@ app.get('/api/v1/current/productions', (req, res) => {
 
 app.get('/api/v1/current/productions/tickets', (req, res) => {
     products.subscribe((result) => res.json(result));
+});
+
+app.get('/api/v1/current/productions/sponsors', (req, res) => {
+    sponsors.subscribe(sponsors => res.json(sponsors));
 });
 
 app.get('/api/v1/recordTypes', (req, res) => {
