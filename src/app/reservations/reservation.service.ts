@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Product2 } from './models/product2';
+import { PricebookEntry } from './models/pricebook-entry';
 
 @Injectable()
 export class ReservationService {
@@ -36,7 +36,7 @@ export class Reservation {
 
 export class Ticket {
 
-    public ticketType: Product2;
+    public ticketType: PricebookEntry;
     public amount: number = 0;
 
     constructor(values: Object) {

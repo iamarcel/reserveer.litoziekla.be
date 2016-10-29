@@ -12,7 +12,7 @@ export class Campaign {
     public RecordTypeId: string;
     public DefaultPricebook2__c: string;
 
-    public ChildCampaigns?: Campaign[];
+    public ChildCampaigns: Campaign[];
 
     constructor(initializer?: any) {
         Object.assign(this, initializer || {});
