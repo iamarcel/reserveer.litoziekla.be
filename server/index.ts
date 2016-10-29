@@ -132,7 +132,7 @@ const sponsors = Observable.forkJoin(login, production)
 // Start up the app
 export const app = express();
 app.use(bodyParser.json());
-app.use(express.static('dist'));
+app.use(express.static(__dirname + '/dist'));
 
 let appData = new AppData();
 const mockData = appData.createDb();
