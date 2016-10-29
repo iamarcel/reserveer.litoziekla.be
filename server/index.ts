@@ -41,7 +41,7 @@ import { getSponsors } from './get-sponsors';
 
 
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 
 
@@ -132,6 +132,7 @@ const sponsors = Observable.forkJoin(login, production)
 // Start up the app
 export const app = express();
 app.use(bodyParser.json());
+app.use(express.static('dist'));
 
 let appData = new AppData();
 const mockData = appData.createDb();
