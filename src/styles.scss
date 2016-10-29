@@ -1,0 +1,89 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/core/theming/prebuilt/indigo-pink.css';
+
+/* Material Design Lite */
+
+// Variables and mixins
+@import "variables";
+@import "~material-design-lite/src/mixins";
+
+// Resets and dependencies
+@import "~material-design-lite/src/resets/resets";
+@import "~material-design-lite/src/typography/typography";
+
+// Components
+@import "~material-design-lite/src/palette/palette";
+@import "~material-design-lite/src/ripple/ripple";
+@import "~material-design-lite/src/animation/animation";
+@import "~material-design-lite/src/badge/badge";
+@import "~material-design-lite/src/button/button";
+@import "~material-design-lite/src/card/card";
+@import "~material-design-lite/src/checkbox/checkbox";
+@import "~material-design-lite/src/chip/chip";
+@import "~material-design-lite/src/data-table/data-table";
+@import "~material-design-lite/src/dialog/dialog";
+@import "~material-design-lite/src/footer/mega_footer";
+@import "~material-design-lite/src/footer/mini_footer";
+@import "~material-design-lite/src/icon-toggle/icon-toggle";
+@import "~material-design-lite/src/list/list";
+@import "~material-design-lite/src/menu/menu";
+@import "~material-design-lite/src/progress/progress";
+@import "~material-design-lite/src/layout/layout";
+@import "~material-design-lite/src/radio/radio";
+@import "~material-design-lite/src/slider/slider";
+@import "~material-design-lite/src/snackbar/snackbar";
+@import "~material-design-lite/src/spinner/spinner";
+@import "~material-design-lite/src/switch/switch";
+@import "~material-design-lite/src/tabs/tabs";
+@import "~material-design-lite/src/textfield/textfield";
+@import "~material-design-lite/src/tooltip/tooltip";
+@import "~material-design-lite/src/shadow/shadow";
+@import "~material-design-lite/src/grid/grid";
+
+body {
+    font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+md-toolbar.md-primary {
+    background: #222;
+}
+
+md-toolbar .logo {
+    height: 1em;
+}
+
+a.icon {
+    text-decoration: none;
+    color: #000;
+}
+
+.inline-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 1em;
+}
+
+.hero img {
+    display: block;
+    width: 100%;
+}
+
+form md-input {
+    width: 100%;
+}
+
+main {
+    padding: 10px;
+    background: #fafafa;
+    max-width: 760px;
+    margin: auto;
+}
+
+md-card {
+    margin-bottom: 1em;
+}
+
+.hero img {
+    width: calc(100% + 48px);
+    margin: 0 -24px 16px -24px;
+}

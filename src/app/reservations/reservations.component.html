@@ -1,88 +1,106 @@
-<md-progress-bar mode="indeterminate" *ngIf="loading > 0"></md-progress-bar>
-<div *ngIf="production">
+<form (ngSubmit)="submit()">
+    <md-card>
+        <md-card-title *ngIf="production">
+            Reserveren voor {{ production.Name }}
+        </md-card-title>
+        <md-card-title *ngIf="!production">
+            Reserveren voor een productie
+        </md-card-title>
+        <md-card-subtitle *ngIf="!production">
+            Laden...
+        </md-card-subtitle>
+        <md-card-content *ngIf="production">
 
-    <h2>
-        Reserveren voor {{ production.Name }}
-    </h2>
+            <div class="hero" [innerHTML]="production.Hero_Image__c"></div>
 
-    <div class="hero" [innerHTML]="production.Hero_Image__c">
-        Laden...
-    </div>
+            <md-nav-list *ngIf="!show">
+                <h3 class="mdl-typography--title">Kies een voorstelling</h3>
+                <a md-list-item href="#"
+                   (click)="setShow(show)"
+                   *ngFor="let show of production.ChildCampaigns.records">
+                    <h3 md-line>{{ show.Entrance__c }}</h3>
+                    <p md-line *ngIf="!showIsFull(show)">
+                        {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+                    </p>
+                    <p md-line *ngIf="showIsFull(show)">
+                        Sorry, volzet!
+                    </p>
+                </a>
+            </md-nav-list>
 
-    <md-nav-list *ngIf="!show">
-        <h3>Kies een voorstelling</h3>
-        <a md-list-item href="#"
-           (click)="setShow(show)"
-           *ngFor="let show of production.ChildCampaigns.records">
-            <h3 md-line>{{ show.Entrance__c }}</h3>
-            <p md-line *ngIf="!showIsFull(show)">
-                {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
-            </p>
-            <p md-line *ngIf="showIsFull(show)">
-                Sorry, volzet!
-            </p>
-        </a>
-    </md-nav-list>
+            <div *ngIf="show">
+                <p class="mdl-typography--subhead">
+                    Je bent tickets aan het reserveren voor
+                    {{ show.Entrance__c }}.
+                </p>
+                <div *ngIf="!submitted">
+                    <h3 class="mdl-typography--title">Jouw gegevens</h3>
+                    <md-input type="text" placeholder="Voornaam"
+                              name="first-name"
+                              [(ngModel)]="reservation.FirstName"></md-input>
+                    <md-input type="text" placeholder="Achternaam"
+                              name="last-name" required
+                              [(ngModel)]="reservation.LastName"></md-input>
 
-    <div *ngIf="show">
-        <p>
-            Je bent tickets aan het reserveren voor
-            {{ show.Entrance__c }}.
-        </p>
-        <form (ngSubmit)="submit()" *ngIf="!submitted">
-            <h3>Jouw gegevens</h3>
-            <md-input type="text" placeholder="Voornaam"
-                      name="first-name"
-                      [(ngModel)]="reservation.FirstName"></md-input>
-            <md-input type="text" placeholder="Achternaam"
-                      name="last-name" required
-                      [(ngModel)]="reservation.LastName"></md-input>
+                    <md-input type="email" placeholder="E-mailadres"
+                              name="email" required
+                              [(ngModel)]="reservation.Email"></md-input>
+                    <md-input type="tel" placeholder="Telefoonnummer"
+                              name="phone"
+                              [(ngModel)]="reservation.Phone"></md-input>
 
-            <md-input type="email" placeholder="E-mailadres"
-                      name="email" required
-                      [(ngModel)]="reservation.Email"></md-input>
-            <md-input type="tel" placeholder="Telefoonnummer"
-                      name="phone"
-                      [(ngModel)]="reservation.Phone"></md-input>
+                    <div *ngIf="reservation.Tickets">
+                        <h3>Tickets</h3>
+                        <md-list>
+                            <md-list-item
+                                *ngFor="let ticket of reservation.Tickets">
+                                <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
+                                <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
+                                <p md-line>
+                                    <a href="#" (click)="ticket.amount = ticket.amount - 1"
+                                       class="icon">
+                                        <md-icon class="inline-icon">remove_circle_outline</md-icon>
+                                    </a>
+                                    <span>{{ ticket.amount }}</span>
+                                    <a href="#" (click)="ticket.amount = ticket.amount + 1"
+                                       class="icon">
+                                        <md-icon class="inline-icon">add_circle_outline</md-icon>
+                                    </a>
+                                </p>
+                            </md-list-item>
+                        </md-list>
+                    </div>
 
-            <div *ngIf="reservation.Tickets">
-                <h3>Tickets</h3>
-                <md-list>
-                    <md-list-item
-                       *ngFor="let ticket of reservation.Tickets">
-                        <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
-                        <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
-                        <p md-line>
-                            <a href="#" (click)="ticket.amount = ticket.amount - 1"
-                               class="icon">
-                                <md-icon class="inline-icon">remove_circle_outline</md-icon>
-                            </a>
-                            <span>{{ ticket.amount }}</span>
-                            <a href="#" (click)="ticket.amount = ticket.amount + 1"
-                               class="icon">
-                                <md-icon class="inline-icon">add_circle_outline</md-icon>
-                            </a>
-                        </p>
-                    </md-list-item>
-                </md-list>
+                </div>
+
+                <div *ngIf="submitted">
+                    <h3 class="mdl-typography--display-1">
+                        <md-icon class="inline-icon mdl-color-text--green-500">check</md-icon>
+                        Klaar!
+                    </h3>
+                    <p class="mdl-typography--subhead">Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
+                </div>
+
             </div>
+        </md-card-content>
 
+        <md-card-actions *ngIf="production" style="text-align: right">
             <button type="submit"
-                    [disabled]=""
-                    md-button color="primary">RESERVEER</button>
-        </form>
+                    [disabled]="" *ngIf="show && !submitted"
+                    md-raised-button raised color="primary">RESERVEER</button>
+        </md-card-actions>
 
-        <div *ngIf="submitted">
-            <p>Klaar! Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
-        </div>
+        <md-card-footer *ngIf="loading > 0">
+            <md-progress-bar mode="indeterminate"></md-progress-bar>
+        </md-card-footer>
 
-    </div>
+    </md-card>
+</form>
 
-</div>
-
-<div *ngIf="sponsors">
-    <h2>Met dank aan onze sponsors</h2>
-    <p>Zij maakten deze productie mogelijk!</p>
-
-    <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c"></div>
-</div>
+<md-card *ngIf="sponsors">
+    <md-card-title>Met dank aan onze sponsors</md-card-title>
+    <md-card-subtitle>Zij maakten deze productie mogelijk!</md-card-subtitle>
+    <md-card-content>
+        <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c"></div>
+    </md-card-content>
+</md-card>

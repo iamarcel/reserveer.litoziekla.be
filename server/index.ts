@@ -1,6 +1,6 @@
 /// <reference path="../typings/index.d.ts" />
 
-import 'core-js';
+import 'core-js/library';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 // const JSForce = require('jsforce');
