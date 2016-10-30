@@ -18,11 +18,11 @@
                 <a md-list-item href="#"
                    (click)="setShow(show)"
                    *ngFor="let show of production.ChildCampaigns.records">
-                    <h3 md-line>{{ show.Entrance__c }}</h3>
-                    <p md-line *ngIf="!showIsFull(show)">
+                    <h3 md-line class="mdl-typography--subhead">{{ show.Entrance__c }}</h3>
+                    <p md-line class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
                         {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
                     </p>
-                    <p md-line *ngIf="showIsFull(show)">
+                    <p md-line class="mdl-typography--caption" *ngIf="showIsFull(show)">
                         Sorry, volzet!
                     </p>
                 </a>
@@ -37,24 +37,28 @@
                     <h3 class="mdl-typography--title">Jouw gegevens</h3>
                     <md-input type="text" placeholder="Voornaam"
                               name="first-name"
+                              [disabled]="submitting"
                               [(ngModel)]="reservation.FirstName"></md-input>
                     <md-input type="text" placeholder="Achternaam"
                               name="last-name" required
+                              [disabled]="submitting"
                               [(ngModel)]="reservation.LastName"></md-input>
 
                     <md-input type="email" placeholder="E-mailadres"
                               name="email" required
+                              [disabled]="submitting"
                               [(ngModel)]="reservation.Email"></md-input>
                     <md-input type="tel" placeholder="Telefoonnummer"
                               name="phone"
+                              [disabled]="submitting"
                               [(ngModel)]="reservation.Phone"></md-input>
 
                     <div *ngIf="reservation.Tickets">
-                        <h3>Tickets</h3>
+                        <h3 class="mdl-typography--title">Tickets</h3>
                         <md-list>
                             <md-list-item
                                 *ngFor="let ticket of reservation.Tickets">
-                                <h4 md-line>{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
+                                <h4 md-line class="mdl-typography--body-2">{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
                                 <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
                                 <p md-line>
                                     <a href="#" (click)="ticket.amount = ticket.amount - 1"
@@ -86,7 +90,7 @@
 
         <md-card-actions *ngIf="production" style="text-align: right">
             <button type="submit"
-                    [disabled]="" *ngIf="show && !submitted"
+                    [disabled]="submitting" *ngIf="show && !submitted"
                     md-raised-button raised color="primary">RESERVEER</button>
         </md-card-actions>
 
