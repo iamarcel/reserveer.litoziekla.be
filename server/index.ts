@@ -1,6 +1,6 @@
 /// <reference path="../typings/index.d.ts" />
 
-import 'core-js/library';
+import 'core-js';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 // const JSForce = require('jsforce');
@@ -77,6 +77,7 @@ login.last().subscribe(_ => {
             .where({
                 'RecordType.DeveloperName': 'Show'
             })
+            .sort('EndDate')
         .end()
         .sort('-StartDate')
         .limit(1)
