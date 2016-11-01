@@ -1,2 +1,6 @@
+dist/ -text
 dist/ -diff
 dist/ merge=ours
+server/ -diff
+server/ -text
+server/ merge=ours
