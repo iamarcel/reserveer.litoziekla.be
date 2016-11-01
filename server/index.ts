@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 // const JSForce = require('jsforce');
 import * as JSForce from 'jsforce';
+import * as ApplicationInsights from 'applicationinsights';
 const SETTINGS = require('./settings.json');
 
 import { Observable } from 'rxjs/Observable';
@@ -46,6 +47,9 @@ const PORT = process.env.PORT || 3000;
 
 
 
+
+// Set up app insights
+ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e').start();
 
 // Set up a Salesforce connection
 console.log('[LOG] Logging in to Salesforce...');
