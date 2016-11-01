@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
+import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
@@ -27,7 +28,9 @@ export class ReservationsComponent {
     private submitted: boolean = false;
 
     constructor(private campaignService: CampaignService,
-                private reservationService: ReservationService) {
+                private reservationService: ReservationService,
+                public snackBar: MdSnackBar,
+                public viewContainerRef: ViewContainerRef) {
 
         this.loading++;
         campaignService.getCurrentProduction()
@@ -35,7 +38,7 @@ export class ReservationsComponent {
                 console.log('Got the production', production);
                 this.production = production;
                 this.loading--;
-            });
+            }, err => this.displayError(err));
 
         this.loading++;
         campaignService.getTicketTypes()
@@ -46,15 +49,20 @@ export class ReservationsComponent {
                 console.log('Got ticket types', tickets);
                 this.reservation.Tickets = tickets;
                 this.loading--;
-            });
+            }, err => this.displayError(err));
 
         this.loading++;
         campaignService.getSponsors()
             .subscribe(sponsors => {
                 this.sponsors = sponsors;
                 this.loading--;
-            })
+            }, this.displayError)
 
+    }
+
+    displayError(err: any) {
+        let config = new MdSnackBarConfig(this.viewContainerRef);
+        this.snackBar.open('Woeps, er is iets foutgelopen! ' + err, null, config);
     }
 
     showIsFull(show: Campaign) {

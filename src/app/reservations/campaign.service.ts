@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { ApiService } from '../api.service';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
