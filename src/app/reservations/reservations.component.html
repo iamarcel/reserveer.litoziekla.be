@@ -104,7 +104,7 @@
 <md-card *ngIf="sponsors">
     <md-card-title>Met dank aan onze sponsors</md-card-title>
     <md-card-subtitle>Zij maakten deze productie mogelijk!</md-card-subtitle>
-    <md-card-content>
-        <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c"></div>
+    <md-card-content class="sponsors">
+        <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor"></div>
     </md-card-content>
 </md-card>
