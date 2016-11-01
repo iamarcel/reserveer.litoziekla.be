@@ -1,0 +1,9 @@
+{
+  "salesforce": {
+    "url": "https://login.salesforce.com",
+    "auth": {
+      "user": "inschrijvingen@litoziekla.be",
+      "pass": "KDSpjSG37HgC5Vj8pa7fe34pGwJ89HNlGOviGTstu"
+    }
+  }
+}
