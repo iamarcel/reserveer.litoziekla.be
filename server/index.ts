@@ -1,9 +1,9 @@
 /// <reference path="../typings/index.d.ts" />
 
+import 'es6-shim';
 import 'core-js';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-// const JSForce = require('jsforce');
 import * as JSForce from 'jsforce';
 import * as ApplicationInsights from 'applicationinsights';
 const SETTINGS = require('./settings.json');
