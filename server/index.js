@@ -162,7 +162,7 @@ exports.app.post('/api/v1/reservations', function (req, res) {
     })); });
     campaignUpdated.subscribe(function (x) { return console.log('[LOG] Campaign updated.'); });
     // When we're done, send a 201
-    Observable_1.Observable.combineLatest(post_to_team_1.postToTeam(SETTINGS, reservation), opportunityCompleted, campaignUpdated)
+    Observable_1.Observable.combineLatest(post_to_team_1.postToTeam(SETTINGS, reservation, production), opportunityCompleted, campaignUpdated)
         .subscribe(function (result) {
         // Update cached production
         production
