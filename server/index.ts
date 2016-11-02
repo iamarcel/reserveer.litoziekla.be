@@ -210,7 +210,7 @@ app.post('/api/v1/reservations', (req, res) => {
 
     // When we're done, send a 201
     Observable.combineLatest(
-        postToTeam(SETTINGS, reservation),
+      postToTeam(SETTINGS, reservation, production),
         opportunityCompleted,
         campaignUpdated)
         .subscribe((result: [any, any]) => {
