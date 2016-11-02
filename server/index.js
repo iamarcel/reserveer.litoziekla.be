@@ -3,7 +3,6 @@
 require('core-js');
 var express = require('express');
 var bodyParser = require('body-parser');
-// const JSForce = require('jsforce');
 var JSForce = require('jsforce');
 var ApplicationInsights = require('applicationinsights');
 var SETTINGS = require('./settings.json');
@@ -28,6 +27,7 @@ var app_data_1 = require('../src/app/app-data');
 var resolve_contact_1 = require('./resolve-contact');
 var add_opportunity_items_1 = require('./add-opportunity-items');
 var get_sponsors_1 = require('./get-sponsors');
+var post_to_team_1 = require('./post-to-team');
 var PORT = process.env.PORT || 3000;
 // Set up app insights
 ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e').start();
@@ -162,7 +162,7 @@ exports.app.post('/api/v1/reservations', function (req, res) {
     })); });
     campaignUpdated.subscribe(function (x) { return console.log('[LOG] Campaign updated.'); });
     // When we're done, send a 201
-    Observable_1.Observable.combineLatest(opportunityCompleted, campaignUpdated)
+    Observable_1.Observable.combineLatest(post_to_team_1.postToTeam(SETTINGS, reservation), opportunityCompleted, campaignUpdated)
         .subscribe(function (result) {
         // Update cached production
         production
