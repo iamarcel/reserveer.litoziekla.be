@@ -1,6 +1,5 @@
 /// <reference path="../typings/index.d.ts" />
 
-import 'es6-shim';
 import 'core-js';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -38,6 +37,7 @@ import { Reservation } from '../src/app/reservations/models/reservation';
 import { resolveContact } from './resolve-contact';
 import { addOpportunityItems } from './add-opportunity-items';
 import { getSponsors } from './get-sponsors';
+import { postToTeam } from './post-to-team';
 
 
 
@@ -210,6 +210,7 @@ app.post('/api/v1/reservations', (req, res) => {
 
     // When we're done, send a 201
     Observable.combineLatest(
+        postToTeam(SETTINGS, reservation),
         opportunityCompleted,
         campaignUpdated)
         .subscribe((result: [any, any]) => {
