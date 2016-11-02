@@ -15,9 +15,9 @@ export const postToTeam = (settings: any, reservation: Reservation, production: 
       url: settings.team.zosw.hookUrl,
       method: 'POST',
       json: {
-        title: "Joepie, " + reservation.FirstName + " " + reservation.LastName + " heeft gereserveerd voor"
+        title: "Joepie, " + reservation.FirstName + " " + reservation.LastName + " heeft gereserveerd voor "
           + production.Name + "!",
-        text: "Dat zijn dan " + reservation.Tickets.reduce((sum, t) => sum + t.amount, 0) + "nieuwe tickets."
+        text: "Dat zijn dan " + reservation.Tickets.reduce((sum, t) => sum + t.amount, 0) + " nieuwe tickets."
       }
     });
   });
