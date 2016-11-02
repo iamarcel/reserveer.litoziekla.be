@@ -10,9 +10,9 @@ exports.postToTeam = function (settings, reservation, production) {
             url: settings.team.zosw.hookUrl,
             method: 'POST',
             json: {
-                title: "Joepie, " + reservation.FirstName + " " + reservation.LastName + " heeft gereserveerd voor"
+                title: "Joepie, " + reservation.FirstName + " " + reservation.LastName + " heeft gereserveerd voor "
                     + production.Name + "!",
-                text: "Dat zijn dan " + reservation.Tickets.reduce(function (sum, t) { return sum + t.amount; }, 0) + "nieuwe tickets."
+                text: "Dat zijn dan " + reservation.Tickets.reduce(function (sum, t) { return sum + t.amount; }, 0) + " nieuwe tickets."
             }
         });
     });
