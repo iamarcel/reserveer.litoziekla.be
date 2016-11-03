@@ -61,7 +61,7 @@
                                 <h4 md-line class="mdl-typography--body-2">{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
                                 <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
                                 <p md-line>
-                                    <a href="#" (click)="ticket.amount = ticket.amount - 1"
+                                    <a href="#" (click)="ticket.amount = ticket.amount > 0 ? ticket.amount - 1 : ticket.amount"
                                        class="icon">
                                         <md-icon class="inline-icon">remove_circle_outline</md-icon>
                                     </a>
