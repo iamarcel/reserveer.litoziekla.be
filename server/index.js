@@ -26,7 +26,6 @@ require('rxjs/add/operator/toArray');
 var RxHttpRequest = require('rx-http-request').RxHttpRequest;
 var app_data_1 = require('../src/app/app-data');
 var get_sponsors_1 = require('./get-sponsors');
-var post_to_team_1 = require('./post-to-team');
 var PORT = process.env.PORT || 3000;
 // Set up app insights
 ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e').start();
@@ -121,8 +120,8 @@ exports.app.get('/api/v1/recordTypes', function (req, res) {
 var request = require('request');
 exports.app.post('/api/v1/reservations', function (req, res) {
     var reservation = req.body;
-    post_to_team_1.postToTeam(SETTINGS, reservation, production)
-        .subscribe(function (x) { return console.log('[LOG] Sent out that there\'s a new reservation to the team!'); });
+    // postToTeam(SETTINGS, reservation, production)
+    //   .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
     RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
         method: 'POST',
         json: true,
