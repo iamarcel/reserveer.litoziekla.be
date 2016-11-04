@@ -162,8 +162,8 @@ const request = require('request');
 app.post('/api/v1/reservations', (req, res) => {
   let reservation: Reservation = req.body;
 
-  postToTeam(SETTINGS, reservation, production)
-    .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
+  // postToTeam(SETTINGS, reservation, production)
+  //   .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
 
   RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
     method: 'POST',
