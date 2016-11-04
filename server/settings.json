@@ -4,7 +4,10 @@
         "auth": {
             "user": "inschrijvingen@litoziekla.be",
             "pass": "KDSpjSG37HgC5Vj8pa7fe34pGwJ89HNlGOviGTstu"
-        }
+        },
+      "endpoints": {
+        "reservation": "https://litoziekla.secure.force.com/reserveer/services/apexrest/Reservation"
+      }
     },
     "team": {
         "zosw": {
