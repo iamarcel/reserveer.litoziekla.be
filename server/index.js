@@ -23,9 +23,8 @@ require('rxjs/add/operator/reduce');
 require('rxjs/add/operator/cache');
 require('rxjs/add/operator/do');
 require('rxjs/add/operator/toArray');
+var RxHttpRequest = require('rx-http-request').RxHttpRequest;
 var app_data_1 = require('../src/app/app-data');
-var resolve_contact_1 = require('./resolve-contact');
-var add_opportunity_items_1 = require('./add-opportunity-items');
 var get_sponsors_1 = require('./get-sponsors');
 var post_to_team_1 = require('./post-to-team');
 var PORT = process.env.PORT || 3000;
@@ -119,68 +118,35 @@ exports.app.get('/api/v1/current/productions/sponsors', function (req, res) {
 exports.app.get('/api/v1/recordTypes', function (req, res) {
     res.json(mockData['record-types']);
 });
+var request = require('request');
 exports.app.post('/api/v1/reservations', function (req, res) {
     var reservation = req.body;
-    var r = Observable_1.Observable.of(reservation);
-    var contact = Observable_1.Observable
-        .forkJoin(login, r)
-        .mergeMap(resolve_contact_1.resolveContact)
-        .last().cache(1);
-    contact.subscribe(function (x) { return console.log('[LOG] Contact updated.'); });
-    var opportunity = Observable_1.Observable.forkJoin(contact, production, products).last()
-        .mergeMap(function (data) {
-        console.log('[LOG] Creating new Opportunity');
-        return Observable_1.Observable.fromPromise(connection
-            .sobject('Opportunity')
-            .create({
-            CampaignId: reservation.CampaignId,
-            AccountId: data[0].AccountId,
-            Pricebook2Id: data[2][0].Pricebook2Id,
-            Name: 'Reservatie ' + data[1].Name + ' - '
-                + data[0].FirstName + ' ' + data[0].LastName,
-            CloseDate: (new Date()).toJSON(),
-            StageName: 'Registered',
-            RecordTypeId: '012240000002dru' // Simple Sale
-        }));
-    }).last().cache(1);
-    opportunity.subscribe(function (x) { return console.log('[LOG] Opportunity created.'); });
-    var opportunityCompleted = Observable_1.Observable.combineLatest(login, opportunity, contact, r)
-        .mergeMap(add_opportunity_items_1.addOpportunityItems)
-        .last().cache(1);
-    opportunityCompleted.subscribe(function (x) { return console.log('[LOG] Added contact role & line items to opportunity.'); });
-    var tickets = reservation.Tickets
-        .filter(function (ticket) { return ticket.amount > 0; });
-    var campaignUpdated = production
-        .flatMap(function (production) { return production.ChildCampaigns.records; })
-        .filter(function (campaign) { return campaign.Id == reservation.CampaignId; })
-        .mergeMap(function (campaign) { return Observable_1.Observable.fromPromise(connection
-        .sobject('Campaign')
-        .update({
-        Id: reservation.CampaignId,
-        NumberOfProducts__c: campaign.NumberOfProducts__c +
-            tickets.reduce(function (sum, t) { return sum + t.amount; }, 0)
-    })); });
-    campaignUpdated.subscribe(function (x) { return console.log('[LOG] Campaign updated.'); });
-    // When we're done, send a 201
-    Observable_1.Observable.combineLatest(post_to_team_1.postToTeam(SETTINGS, reservation, production), opportunityCompleted, campaignUpdated)
-        .subscribe(function (result) {
-        // Update cached production
-        production
-            .subscribe(function (campaign) {
-            console.log('[LOG] Updating cached available seats');
-            var thisCampaign = campaign.ChildCampaigns.records
-                .filter(function (campaign) { return campaign.Id == reservation.CampaignId; })[0];
-            thisCampaign.NumberOfProducts__c += reservation.Tickets.reduce(function (acc, t) { return acc + t.amount; }, 0);
-            productionSubject.next(campaign);
-        });
-        console.log('[NICE] All done processing the reservation\n\n');
-        res.status(201).json({
-            status: 'Created'
-        });
-    }, function (err) {
-        console.error('[ERROR] while processing reservation:');
-        console.error(err);
-        res.sendStatus(500);
+    RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
+        method: 'POST',
+        json: true,
+        body: reservation
+    })
+        .subscribe(function (data) {
+        if (data.response.statusCode != 201) {
+            res.status(data.response.statusCode).json({
+                error: data.body
+            });
+        }
+        else {
+            production.subscribe(function (campaign) {
+                post_to_team_1.postToTeam(SETTINGS, reservation, campaign)
+                    .subscribe(function (x) { return console.log('[LOG] Sent out that there\'s a new reservation to the team!'); });
+                console.log('[LOG] Updating cached available seats');
+                var thisCampaign = campaign.ChildCampaigns.records
+                    .filter(function (campaign) { return campaign.Id == reservation.CampaignId; })[0];
+                thisCampaign.NumberOfProducts__c += reservation.Tickets.reduce(function (acc, t) { return acc + t.amount; }, 0);
+                productionSubject.next(campaign);
+            });
+            console.log('[NICE] All done processing the reservation\n\n');
+            res.status(201).json({
+                status: 'Created'
+            });
+        }
     });
 });
 exports.app.listen(PORT, function (_) {
