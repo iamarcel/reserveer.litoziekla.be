@@ -162,6 +162,8 @@ const request = require('request');
 app.post('/api/v1/reservations', (req, res) => {
   let reservation: Reservation = req.body;
 
+  postToTeam(SETTINGS, reservation, production)
+    .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
 
   RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
     method: 'POST',
@@ -175,8 +177,6 @@ app.post('/api/v1/reservations', (req, res) => {
         });
       } else {
         production.subscribe((campaign: any) => {
-          postToTeam(SETTINGS, reservation, campaign)
-            .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
           console.log('[LOG] Updating cached available seats');
           let thisCampaign = campaign.ChildCampaigns.records
             .filter((campaign: Campaign) => campaign.Id == reservation.CampaignId)[0];
