@@ -121,6 +121,8 @@ exports.app.get('/api/v1/recordTypes', function (req, res) {
 var request = require('request');
 exports.app.post('/api/v1/reservations', function (req, res) {
     var reservation = req.body;
+    post_to_team_1.postToTeam(SETTINGS, reservation, production)
+        .subscribe(function (x) { return console.log('[LOG] Sent out that there\'s a new reservation to the team!'); });
     RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
         method: 'POST',
         json: true,
@@ -134,8 +136,6 @@ exports.app.post('/api/v1/reservations', function (req, res) {
         }
         else {
             production.subscribe(function (campaign) {
-                post_to_team_1.postToTeam(SETTINGS, reservation, campaign)
-                    .subscribe(function (x) { return console.log('[LOG] Sent out that there\'s a new reservation to the team!'); });
                 console.log('[LOG] Updating cached available seats');
                 var thisCampaign = campaign.ChildCampaigns.records
                     .filter(function (campaign) { return campaign.Id == reservation.CampaignId; })[0];
