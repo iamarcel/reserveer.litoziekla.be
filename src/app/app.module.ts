@@ -9,6 +9,7 @@ import { AppData } from './app-data';
 
 import { AppComponent } from './app.component';
 import { ApiService } from './api.service';
+import { TagService } from './tag.service';
 
 import { ReservationsModule } from './reservations/reservations.module';
 
@@ -26,8 +27,9 @@ import { ReservationsModule } from './reservations/reservations.module';
     ReservationsModule
   ],
   providers: [
-      { provide: LOCALE_ID, useValue: 'nl' },
-      ApiService
+    { provide: LOCALE_ID, useValue: 'nl' },
+    ApiService,
+    TagService
   ],
   exports: [ ],
   bootstrap: [AppComponent]
