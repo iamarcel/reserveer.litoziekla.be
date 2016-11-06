@@ -1,10 +1,11 @@
 export class PricebookEntry {
-    public Id: String;
-    public Product2Id: String;
-    public Pricebook2Id: String;
-    public UnitPrice: Number;
+  public Id: string;
+  public Name: string;
+  public Product2Id: string;
+  public Pricebook2Id: string;
+  public UnitPrice: Number;
 
-    constructor(initializer: any) {
-        Object.assign(this, initializer);
-    }
+  constructor(initializer: any) {
+    Object.assign(this, initializer);
+  }
 }
