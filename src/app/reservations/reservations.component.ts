@@ -163,6 +163,11 @@ export class ReservationsComponent {
   submit(form) {
     console.log('submitted form', form.value);
 
+    this.reservation.Email = form.value['email'];
+    this.reservation.FirstName = form.value['first-name'] || '';
+    this.reservation.LastName = form.value['last-name'];
+    this.reservation.Phone = form.value['phone'] || '';
+
     this.formErrors = [];
     if (this.reservation.Tickets.reduce((sum, t) => sum += t.amount, 0) <= 0) {
       this.formErrors.push({
