@@ -30,6 +30,8 @@ export class ReservationsComponent {
   private submitting: boolean = false;
   private submitted: boolean = false;
 
+  private formErrors = [];
+
   constructor(private campaignService: CampaignService,
               private reservationService: ReservationService,
               private tagService: TagService,
@@ -158,7 +160,20 @@ export class ReservationsComponent {
     });
   }
 
-  submit() {
+  submit(form) {
+    console.log('submitted form', form.value);
+
+    this.formErrors = [];
+    if (this.reservation.Tickets.reduce((sum, t) => sum += t.amount, 0) <= 0) {
+      this.formErrors.push({
+        message: 'Je moet minstens 1 ticket kiezen.'
+      });
+    }
+
+    if (this.formErrors.length > 0) {
+      return;
+    }
+
     this.loading++;
     this.submitting = true;
     this.reservationService.put(this.reservation)
