@@ -1,110 +1,149 @@
-<form (ngSubmit)="submit()">
-    <md-card>
-        <md-card-title *ngIf="production">
-            Reserveren voor {{ production.Name }}
-        </md-card-title>
-        <md-card-title *ngIf="!production">
-            Reserveren voor een productie
-        </md-card-title>
-        <md-card-subtitle *ngIf="!production">
-            Laden...
-        </md-card-subtitle>
-        <md-card-content *ngIf="production">
+<form
+    #form="ngForm"
+    (ngSubmit)="submit(form)"
+    class="ui form">
+  <md-card>
+    <sm-loader [complete]="loading <= 0" text="Laden..." class="inverted"></sm-loader>
+    <md-card-title *ngIf="production">
+      Reserveren voor {{ production.Name }}
+    </md-card-title>
+    <md-card-title *ngIf="!production">
+      Reserveren voor een productie
+    </md-card-title>
+    <md-card-subtitle *ngIf="!production">
+      Laden...
+    </md-card-subtitle>
+    <md-card-content *ngIf="production">
 
-            <div class="hero" [innerHTML]="production.Hero_Image__c"></div>
+      <div class="hero" [innerHTML]="production.Hero_Image__c"></div>
 
-            <md-nav-list *ngIf="!show">
-                <h3 class="mdl-typography--title">Kies een voorstelling</h3>
-                <a md-list-item href="#"
-                   (click)="setShow(show)"
-                   *ngFor="let show of production.ChildCampaigns.records">
-                    <h3 md-line class="mdl-typography--subhead">{{ show.Entrance__c }}</h3>
-                    <p md-line class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
-                        {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
-                    </p>
-                    <p md-line class="mdl-typography--caption" *ngIf="showIsFull(show)">
-                        Sorry, volzet!
-                    </p>
-                </a>
-            </md-nav-list>
+      <div *ngIf="!show">
+        <h3 class="mdl-typography--title">Kies een voorstelling</h3>
 
-            <div *ngIf="show">
-                <p class="mdl-typography--subhead">
-                    Je bent tickets aan het reserveren voor
-                    {{ show.Entrance__c }}.
-                </p>
-                <div *ngIf="!submitted">
-                    <h3 class="mdl-typography--title">Jouw gegevens</h3>
-                    <md-input type="text" placeholder="Voornaam"
-                              name="first-name"
-                              [disabled]="submitting"
-                              [(ngModel)]="reservation.FirstName"></md-input>
-                    <md-input type="text" placeholder="Achternaam"
-                              name="last-name" required
-                              [disabled]="submitting"
-                              [(ngModel)]="reservation.LastName"></md-input>
+        <sm-list class="very relaxed divided animated">
+          <a sm-item
+             [header]="show.Entrance__c"
+             (click)="setShow(show)"
+             *ngFor="let show of production.ChildCampaigns.records">
+            <p class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
+              {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+            </p>
+            <p class="mdl-typography--caption" *ngIf="showIsFull(show)">
+              Sorry, volzet!
+            </p>
+          </a>
+        </sm-list>
+      </div>
 
-                    <md-input type="email" placeholder="E-mailadres"
-                              name="email" required
-                              [disabled]="submitting"
-                              [(ngModel)]="reservation.Email"></md-input>
-                    <md-input type="tel" placeholder="Telefoonnummer"
-                              name="phone"
-                              [disabled]="submitting"
-                              [(ngModel)]="reservation.Phone"></md-input>
+      <div *ngIf="show">
+        <p class="mdl-typography--subhead">
+          Je bent tickets aan het reserveren voor
+          {{ show.Entrance__c }}.
+        </p>
+        <div *ngIf="!submitted">
+          <h3 class="ui dividing header">Jouw gegevens</h3>
+          <p>Velden met een * zijn verplicht.</p>
+          <div class="field">
+            <sm-input type="text"
+                      label="Voornaam"
+                      placeholder="Voornaam..."
+                      name="first-name"
+                      ngModel>
+            </sm-input>
+          </div>
+          <div class="field">
+            <sm-input type="text"
+                      label="Achternaam"
+                      placeholder="Achternaam..."
+                      name="last-name"
+                      required
+                      ngModel>
+            </sm-input>
+          </div>
+          <div class="field">
+            <sm-input type="email"
+                      label="E-mailadres"
+                      placeholder="mijn@email.com..."
+                      name="email" required
+                      ngModel>
+            </sm-input>
+          </div>
+          <div class="field">
+            <sm-input type="tel"
+                      label="Telefoonnummer"
+                      placeholder="Telefoonnummer..."
+                      name="phone"
+                      ngModel>
+            </sm-input>
+          </div>
 
-                    <div *ngIf="reservation.Tickets">
-                        <h3 class="mdl-typography--title">Tickets</h3>
-                        <md-list>
-                            <md-list-item
-                                *ngFor="let ticket of reservation.Tickets">
-                                <h4 md-line class="mdl-typography--body-2">{{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})</h4>
-                                <p md-line>{{ ticket.ticketType.Product2.Description }}</p>
-                                <p md-line>
-                                    <a href="#" (click)="removeTicket(ticket)"
-                                       class="icon">
-                                        <md-icon class="inline-icon">remove_circle_outline</md-icon>
-                                    </a>
-                                    <span>{{ ticket.amount }}</span>
-                                    <a href="#" (click)="addTicket(ticket)"
-                                       class="icon">
-                                        <md-icon class="inline-icon">add_circle_outline</md-icon>
-                                    </a>
-                                </p>
-                            </md-list-item>
-                        </md-list>
+          <div *ngIf="reservation.Tickets">
+            <h3 class="ui dividing header">Kies je tickets</h3>
+            <sm-list class="very relaxed">
+              <div class="item"
+                   *ngFor="let ticket of reservation.Tickets">
+                <div class="right floated content">
+                  <div class="ui input buttons">
+                    <div class="ui basic button" (click)="removeTicket(ticket)">
+                      <md-icon class="inline-icon">remove_circle_outline</md-icon>
                     </div>
-
+                    <input type="number" [(value)]="ticket.amount" style="width: 4em">
+                    <div class="ui basic button" (click)="addTicket(ticket)">
+                      <md-icon class="inline-icon">add_circle_outline</md-icon>
+                    </div>
+                  </div>
                 </div>
 
-                <div *ngIf="submitted">
-                    <h3 class="mdl-typography--display-1">
-                        <md-icon class="inline-icon mdl-color-text--green-500">check</md-icon>
-                        Klaar!
-                    </h3>
-                    <p class="mdl-typography--subhead">Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
+                <div class="content">
+                  <div class="header">
+                    {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
+                  </div>
+                  <div class="description">
+                    <p>{{ ticket.ticketType.Product2.Description }}</p>
+                  </div>
                 </div>
+              </div>
+            </sm-list>
+          </div>
 
-            </div>
-        </md-card-content>
+        </div>
 
-        <md-card-actions *ngIf="production" style="text-align: right">
-            <button type="submit"
-                    [disabled]="submitting" *ngIf="show && !submitted"
-                    md-raised-button raised color="primary">RESERVEER</button>
-        </md-card-actions>
+        <sm-button type="submit"
+                   class="primary"
+                   [disabled]="submitting || !form.valid" *ngIf="show && !submitted">
+          RESERVEER
+        </sm-button>
 
-        <md-card-footer *ngIf="loading > 0">
-            <md-progress-bar mode="indeterminate"></md-progress-bar>
-        </md-card-footer>
+        <div *ngIf="formErrors.length > 0 && !submitted" class="ui negative message">
+          <div class="header">
+            Oeps, dat ziet er niet goed uit!
+          </div>
+          <ul class="list">
+            <li *ngFor="let error of formErrors">
+              {{ error.message }}
+            </li>
+          </ul>
+        </div>
 
-    </md-card>
+
+        <div *ngIf="submitted">
+          <h3 class="mdl-typography--display-1">
+            <md-icon class="inline-icon mdl-color-text--green-500">check</md-icon>
+            Klaar!
+          </h3>
+          <p class="mdl-typography--subhead">Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
+        </div>
+
+
+      </div>
+    </md-card-content>
+  </md-card>
 </form>
 
 <md-card *ngIf="sponsors">
-    <md-card-title>Met dank aan onze sponsors</md-card-title>
-    <md-card-subtitle>Zij maakten deze productie mogelijk!</md-card-subtitle>
-    <md-card-content class="sponsors">
-        <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor"></div>
-    </md-card-content>
+  <md-card-title>Met dank aan onze sponsors</md-card-title>
+  <md-card-subtitle>Zij maakten deze productie mogelijk!</md-card-subtitle>
+  <md-card-content class="sponsors">
+    <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor"></div>
+  </md-card-content>
 </md-card>

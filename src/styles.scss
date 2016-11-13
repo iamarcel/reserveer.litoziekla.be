@@ -1,5 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/core/theming/prebuilt/indigo-pink.css';
 
 /* Material Design Lite */
 
@@ -42,14 +41,6 @@
 
 body {
     font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', sans-serif;
-}
-
-md-toolbar.md-primary {
-    background: #222;
-}
-
-md-toolbar .logo {
-    height: 1em;
 }
 
 a.icon {
@@ -101,4 +92,39 @@ md-card {
 .sponsor img {
     display: block;
     width: 100%;
+}
+
+
+// -----------------------------------------------------------------------------
+// Angular Material Theme
+@import '~@angular/material/core/theming/all-theme';
+// Plus imports for other components in your app.
+
+// Include the base styles for Angular Material core. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+@include md-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$lito-app-primary: md-palette($md-indigo);
+$lito-app-accent:  md-palette($md-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$lito-app-warn:    md-palette($md-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$lito-app-theme: md-light-theme($lito-app-primary, $lito-app-accent, $lito-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($lito-app-theme);
+
+md-toolbar.md-primary {
+  background: #222;
+}
+
+md-toolbar .logo {
+  height: 1em;
 }
