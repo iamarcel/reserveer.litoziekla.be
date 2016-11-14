@@ -28,10 +28,12 @@
     "angular-in-memory-web-api": "=0.1.13",
     "applicationinsights": "^0.16.0",
     "body-parser": "^1.15.2",
+    "core-js": "^2.4.1",
     "express": "^4.14.0",
     "i": "^0.3.5",
     "jsforce": "^1.7.1",
     "material-design-lite": "^1.2.1",
+    "ng-semantic": "github:iamarcel/ngSemantic",
     "rx-http-request": "^1.2.0",
     "rxjs": "5.0.0-beta.12",
     "ts-helpers": "^1.1.1",
@@ -40,7 +42,7 @@
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
     "@types/node": "^6.0.42",
-    "angular-cli": "1.0.0-beta.18",
+    "angular-cli": "^1.0.0-beta.19-3",
     "codelyzer": "1.0.0-beta.1",
     "jasmine-core": "2.4.1",
     "jasmine-spec-reporter": "2.5.0",
@@ -54,5 +56,8 @@
     "ts-node": "1.2.1",
     "tslint": "3.13.0",
     "typescript": "~2.0.3"
+  },
+  "browser": {
+    "ng-semantic": "../ng-semantic/ng-semantic"
   }
 }

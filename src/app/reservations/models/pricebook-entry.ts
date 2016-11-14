@@ -3,7 +3,7 @@ export class PricebookEntry {
   public Name: string;
   public Product2Id: string;
   public Pricebook2Id: string;
-  public UnitPrice: Number;
+  public UnitPrice: number;
 
   constructor(initializer: any) {
     Object.assign(this, initializer);

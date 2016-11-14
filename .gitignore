@@ -1,5 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# compiled output
+/dist
+/tmp
+
 # dependencies
 /node_modules
 /bower_components
@@ -28,8 +32,3 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
-
-# Source files
-e2e/
-notes.org
-

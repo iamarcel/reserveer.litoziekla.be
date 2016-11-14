@@ -13,6 +13,7 @@ import { Reservation, Ticket } from './models/reservation';
 
 import { CampaignService } from './campaign.service';
 import { ReservationService } from './reservation.service';
+import { LogService } from '../log.service';
 import { TagService } from '../tag.service';
 
 @Component({
@@ -35,6 +36,7 @@ export class ReservationsComponent {
   constructor(private campaignService: CampaignService,
               private reservationService: ReservationService,
               private tagService: TagService,
+              private logSerivce: LogService,
               public snackBar: MdSnackBar,
               public viewContainerRef: ViewContainerRef) {
 
@@ -190,17 +192,23 @@ export class ReservationsComponent {
         console.log(result);
 
         this.reservation = new Reservation();
-      });
 
-    // Send to GTM
-    this.tagService.push({
-      'event': 'purchase',
-      'ecommerce': {
-        'purchase': {
-          'products': this._ticketsForGTM(this.reservation.Tickets)
-        }
-      }
-    })
+        let opportunity = result as Opportunity;
+
+        // Send to GTM
+        this.tagService.push({
+          'event': 'purchase',
+          'ecommerce': {
+            'purchase': {
+              'actionField': {
+                'id': opportunity.Id || 'UNKNOWN_OPPORTUNITY',
+                'revenue': this.reservation.totalPrice
+              },
+              'products': this._ticketsForGTM(this.reservation.Tickets)
+            }
+          }
+        });
+      });
   }
 
   private _ticketsForGTM(tickets: Ticket[]) {

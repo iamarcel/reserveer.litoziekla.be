@@ -10,36 +10,54 @@
     <md-card-title *ngIf="!production">
       Reserveren voor een productie
     </md-card-title>
-    <md-card-subtitle *ngIf="!production">
-      Laden...
-    </md-card-subtitle>
     <md-card-content *ngIf="production">
-
       <div class="hero" [innerHTML]="production.Hero_Image__c"></div>
 
       <div *ngIf="!show">
-        <h3 class="mdl-typography--title">Kies een voorstelling</h3>
 
-        <sm-list class="very relaxed divided animated">
-          <a sm-item
-             [header]="show.Entrance__c"
+        <h3 class="ui dividing header">
+          De voorstelling
+        </h3>
+        <p>
+          <strong>Locatie:</strong> {{ production.Location__c }}
+        </p>
+        <p>Kies een voorstelling</p>
+
+        <sm-list class="very relaxed divided">
+          <a class="item"
              (click)="setShow(show)"
              *ngFor="let show of production.ChildCampaigns.records">
-            <p class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
-              {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
-            </p>
-            <p class="mdl-typography--caption" *ngIf="showIsFull(show)">
-              Sorry, volzet!
-            </p>
+            <div class="right floated middle aligned content">
+              <button class="ui mini button primary" type="button">
+                <md-icon class="inline-icon">arrow_forward</md-icon>
+              </button>
+            </div>
+            <div class="middle aligned content">
+              <div class="header">
+                {{ show.Entrance__c }}
+              </div>
+              <p class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
+                {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+              </p>
+              <p class="mdl-typography--caption" *ngIf="showIsFull(show)">
+                Sorry, volzet!
+              </p>
+            </div>
           </a>
         </sm-list>
       </div>
 
       <div *ngIf="show">
-        <p class="mdl-typography--subhead">
-          Je bent tickets aan het reserveren voor
-          {{ show.Entrance__c }}.
+        <h3 class="ui dividing header">
+          De voorstelling
+        </h3>
+        <p>
+          <strong>Locatie:</strong> {{ production.Location__c }}
         </p>
+        <p>
+          <strong>Aanvang:</strong> {{ show.Entrance__c }}
+        </p>
+
         <div *ngIf="!submitted">
           <h3 class="ui dividing header">Jouw gegevens</h3>
           <p>Velden met een * zijn verplicht.</p>
@@ -48,7 +66,7 @@
                       label="Voornaam"
                       placeholder="Voornaam..."
                       name="first-name"
-                      ngModel>
+                      model>
             </sm-input>
           </div>
           <div class="field">
@@ -57,7 +75,7 @@
                       placeholder="Achternaam..."
                       name="last-name"
                       required
-                      ngModel>
+                      model>
             </sm-input>
           </div>
           <div class="field">
@@ -65,7 +83,7 @@
                       label="E-mailadres"
                       placeholder="mijn@email.com..."
                       name="email" required
-                      ngModel>
+                      model>
             </sm-input>
           </div>
           <div class="field">
@@ -73,7 +91,7 @@
                       label="Telefoonnummer"
                       placeholder="Telefoonnummer..."
                       name="phone"
-                      ngModel>
+                      model>
             </sm-input>
           </div>
 
@@ -87,7 +105,8 @@
                     <div class="ui basic button" (click)="removeTicket(ticket)">
                       <md-icon class="inline-icon">remove_circle_outline</md-icon>
                     </div>
-                    <input type="number" [(value)]="ticket.amount" style="width: 4em">
+                    <input type="number" [(ngModel)]="ticket.amount" style="width: 4em"
+                           [name]="'ticket-' + ticket.ticketType.Id + '-amount'">
                     <div class="ui basic button" (click)="addTicket(ticket)">
                       <md-icon class="inline-icon">add_circle_outline</md-icon>
                     </div>
