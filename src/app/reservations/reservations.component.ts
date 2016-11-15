@@ -237,7 +237,7 @@ export class ReservationsComponent {
       return;
     }
 
-    this.reservation = form.value as Reservation;
+    Object.assign(this.reservation, form.value);
     console.log('submitted form', form.value);
 
     this.loading++;
