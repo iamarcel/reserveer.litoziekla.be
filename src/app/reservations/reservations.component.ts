@@ -15,7 +15,7 @@ import { ReservationService } from './reservation.service';
 import { LogService } from '../log.service';
 import { TagService } from '../tag.service';
 
-const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const emailValidator = (control: AbstractControl): {[key: string]: any} => {
   const email = control.value;
@@ -43,6 +43,7 @@ const ticketAmountValidator = (tickets: Ticket[]) => {
 export class ReservationsComponent {
 
   private form: FormGroup;
+  private error: string;
 
   private production: Campaign;
   private show: Campaign;
@@ -74,7 +75,6 @@ export class ReservationsComponent {
               private fb: FormBuilder,
               private tagService: TagService,
               private logSerivce: LogService,
-              public snackBar: MdSnackBar,
               public viewContainerRef: ViewContainerRef) {
 
     this.loading++;
@@ -141,8 +141,7 @@ export class ReservationsComponent {
   }
 
   displayError(err: any) {
-    let config = new MdSnackBarConfig(this.viewContainerRef);
-    this.snackBar.open('Woeps, er is iets foutgelopen! ' + err, null, config);
+    this.error = err;
   }
 
   showIsFull(show: Campaign) {

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/cache';
+import 'rxjs/add/operator/map';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
