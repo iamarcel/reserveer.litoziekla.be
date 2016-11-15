@@ -1,0 +1,23 @@
+<div [formGroup]="form">
+  <div class="right floated content">
+    <div class="ui input buttons">
+      <div class="ui basic icon button" (click)="removeTicket()">
+        <i class="ui minus circle icon"></i>
+      </div>
+      <input type="number" style="width: 4em"
+             formControlName="amount">
+      <div class="ui basic icon button" (click)="addTicket()">
+        <i class="ui add circle icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="header">
+      {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
+    </div>
+    <div class="description">
+      <p>{{ ticket.ticketType.Product2.Description }}</p>
+    </div>
+  </div>
+</div>

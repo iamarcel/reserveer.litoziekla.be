@@ -3,44 +3,9 @@
 /* Material Design Lite */
 
 // Variables and mixins
-@import "variables";
-@import "~material-design-lite/src/mixins";
-
-// Resets and dependencies
-@import "~material-design-lite/src/resets/resets";
-@import "~material-design-lite/src/typography/typography";
-
-// Components
-/* @import "~material-design-lite/src/palette/palette"; */
-/* @import "~material-design-lite/src/ripple/ripple"; */
-/* @import "~material-design-lite/src/animation/animation"; */
-/* @import "~material-design-lite/src/badge/badge"; */
-/* @import "~material-design-lite/src/button/button"; */
-/* @import "~material-design-lite/src/card/card"; */
-/* @import "~material-design-lite/src/checkbox/checkbox"; */
-/* @import "~material-design-lite/src/chip/chip"; */
-/* @import "~material-design-lite/src/data-table/data-table"; */
-/* @import "~material-design-lite/src/dialog/dialog"; */
-/* @import "~material-design-lite/src/footer/mega_footer"; */
-/* @import "~material-design-lite/src/footer/mini_footer"; */
-/* @import "~material-design-lite/src/icon-toggle/icon-toggle"; */
-/* @import "~material-design-lite/src/list/list"; */
-/* @import "~material-design-lite/src/menu/menu"; */
-/* @import "~material-design-lite/src/progress/progress"; */
-@import "~material-design-lite/src/layout/layout";
-/* @import "~material-design-lite/src/radio/radio"; */
-/* @import "~material-design-lite/src/slider/slider"; */
-/* @import "~material-design-lite/src/snackbar/snackbar"; */
-/* @import "~material-design-lite/src/spinner/spinner"; */
-/* @import "~material-design-lite/src/switch/switch"; */
-/* @import "~material-design-lite/src/tabs/tabs"; */
-/* @import "~material-design-lite/src/textfield/textfield"; */
-/* @import "~material-design-lite/src/tooltip/tooltip"; */
-/* @import "~material-design-lite/src/shadow/shadow"; */
-@import "~material-design-lite/src/grid/grid";
 
 body {
-    font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', sans-serif;
+    font-family: Lato, 'Source Sans Pro', 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
 a.icon {
@@ -52,6 +17,10 @@ a.icon {
     width: 1em;
     height: 1em;
     font-size: 1em;
+}
+
+a .ui.icon.button .icon {
+  color: inherit !important;
 }
 
 .hero img {
@@ -66,27 +35,11 @@ form md-input {
 main {
     padding: 10px;
     background: #fafafa;
-    max-width: 760px;
-    margin: auto;
+    margin: 0;
 }
 
 md-card {
     margin-bottom: 1em;
-}
-
-.hero img {
-    width: calc(100% + 48px);
-    margin: 0 -24px 16px -24px;
-}
-
-.sponsors {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.sponsor {
-    width: 30%;
-    margin: 10px;
 }
 
 .sponsor img {
@@ -94,37 +47,12 @@ md-card {
     width: 100%;
 }
 
-
-// -----------------------------------------------------------------------------
-// Angular Material Theme
-@import '~@angular/material/core/theming/all-theme';
-// Plus imports for other components in your app.
-
-// Include the base styles for Angular Material core. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-@include md-core();
-
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue.
-$lito-app-primary: md-palette($md-indigo);
-$lito-app-accent:  md-palette($md-pink, A200, A100, A400);
-
-// The warn palette is optional (defaults to red).
-$lito-app-warn:    md-palette($md-red);
-
-// Create the theme object (a Sass map containing all of the palettes).
-$lito-app-theme: md-light-theme($lito-app-primary, $lito-app-accent, $lito-app-warn);
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include angular-material-theme($lito-app-theme);
-
-md-toolbar.md-primary {
-  background: #222;
+.ui.menu {
+  border-radius: 0;
+  margin: 0;
 }
 
-md-toolbar .logo {
+.menu .header.item img.logo {
   height: 1em;
+  width: auto;
 }

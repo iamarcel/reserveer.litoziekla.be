@@ -1,14 +1,13 @@
 import { Component, ViewContainerRef } from '@angular/core';
+import { FormControl, FormBuilder, FormGroup, FormArray,
+         AbstractControl, Validators } from '@angular/forms';
 import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
-import { Account } from './models/account';
-import { Contact } from './models/contact';
 import { Product2 } from './models/product2';
-import { OpportunityLineItem } from './models/opportunity-line-item';
 import { Reservation, Ticket } from './models/reservation';
 
 import { CampaignService } from './campaign.service';
@@ -16,11 +15,34 @@ import { ReservationService } from './reservation.service';
 import { LogService } from '../log.service';
 import { TagService } from '../tag.service';
 
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+const emailValidator = (control: AbstractControl): {[key: string]: any} => {
+  const email = control.value;
+  return EMAIL_REGEX.test(control.value) ? null : {'email': {email}};
+};
+
+const ticketAmountValidator = (tickets: Ticket[]) => {
+  return (control: AbstractControl): {[key: string]: any} => {
+    if (!tickets) {
+      return null;
+    }
+
+    const totalAmount = tickets.reduce((sum, t, i) => {
+      return sum + control.get([i, 'amount']).value;
+    }, 0);
+    return (totalAmount > 0) ? null : { 'ticketAmount': {totalAmount} };
+  };
+};
+
+
 @Component({
   selector: 'app-reservations',
   templateUrl: './reservations.component.html'
 })
 export class ReservationsComponent {
+
+  private form: FormGroup;
 
   private production: Campaign;
   private show: Campaign;
@@ -31,10 +53,25 @@ export class ReservationsComponent {
   private submitting: boolean = false;
   private submitted: boolean = false;
 
-  private formErrors = [];
+  private formErrors: string[] = [];
+
+  private validationMessages = {
+    'LastName': {
+      'required': 'Achternaam is verplicht.'
+    },
+    'Email': {
+      'required': 'E-mailadres is verplicht.',
+      'email': 'E-mailadres moet een geldig adres zijn.'
+    },
+    'Tickets': {
+      'ticketAmount': 'Je moet minstens één ticket kiezen.'
+    }
+  };
+
 
   constructor(private campaignService: CampaignService,
               private reservationService: ReservationService,
+              private fb: FormBuilder,
               private tagService: TagService,
               private logSerivce: LogService,
               public snackBar: MdSnackBar,
@@ -57,6 +94,7 @@ export class ReservationsComponent {
         console.log('Got ticket types', tickets);
         this.reservation.Tickets = tickets;
         this.loading--;
+        this._buildForm();
       }, err => this.displayError(err));
 
     this.loading++;
@@ -65,6 +103,8 @@ export class ReservationsComponent {
         this.sponsors = sponsors;
         this.loading--;
       }, this.displayError);
+
+    this._buildForm();
 
     // Send sponsor impressions to GTM
     campaignService.getSponsors()
@@ -80,6 +120,24 @@ export class ReservationsComponent {
           }
         });
       });
+  }
+
+  _buildForm(): void {
+    this.form = this.fb.group({
+      'FirstName': '',
+      'LastName': ['', Validators.required],
+      'Email': ['', [Validators.required, emailValidator]],
+      'Phone': '',
+      'Tickets': this.fb.array((this.reservation.Tickets || []).map(
+        t => this.fb.group({
+          'amount': [0],
+          'ticketType': [t.ticketType, Validators.required]
+        })), ticketAmountValidator(this.reservation.Tickets))
+    });
+
+    this.form.valueChanges
+      .subscribe(data => this.validate());
+    this.validate();
   }
 
   displayError(err: any) {
@@ -105,10 +163,6 @@ export class ReservationsComponent {
       this.campaignService.getCurrentProduction(),
       this.campaignService.getSponsors())
       .subscribe(data => {
-        let tickets = data[0];
-        let production = data[1];
-        let sponsors = data[2];
-
         this.tagService.push({
           'ecommerce': {
             'currencyCode': 'EUR',
@@ -119,8 +173,6 @@ export class ReservationsComponent {
   }
 
   addTicket(ticket: Ticket) {
-    ticket.amount++;
-
     // Send to GTM
     this.tagService.push({
       'ecommerce': {
@@ -139,12 +191,6 @@ export class ReservationsComponent {
   }
 
   removeTicket(ticket: Ticket) {
-    if (ticket.amount <= 0) {
-      return;
-    }
-
-    ticket.amount--;
-
     // Send to GTM
     this.tagService.push({
       'ecommerce': {
@@ -162,24 +208,38 @@ export class ReservationsComponent {
     });
   }
 
-  submit(form) {
-    console.log('submitted form', form.value);
-
-    this.reservation.Email = form.value['email'];
-    this.reservation.FirstName = form.value['first-name'] || '';
-    this.reservation.LastName = form.value['last-name'];
-    this.reservation.Phone = form.value['phone'] || '';
-
-    this.formErrors = [];
-    if (this.reservation.Tickets.reduce((sum, t) => sum += t.amount, 0) <= 0) {
-      this.formErrors.push({
-        message: 'Je moet minstens 1 ticket kiezen.'
-      });
-    }
-
-    if (this.formErrors.length > 0) {
+  validate(ignoreDirty?: boolean) {
+    if (!this.form) {
       return;
     }
+    const form = this.form;
+
+    this.formErrors = [];
+    for (const fieldName in this.validationMessages) {
+      const control = form.get(fieldName);
+
+      if (ignoreDirty) {
+        control.markAsDirty();
+        control.markAsTouched();
+      }
+
+      if (control && (control.dirty || ignoreDirty) && !control.valid) {
+        for (const key in control.errors) {
+          this.formErrors.push(this.validationMessages[fieldName][key]);
+        }
+      }
+    }
+
+    return form.valid;
+  }
+
+  submit(form: FormGroup) {
+    if (!form.valid) {
+      return;
+    }
+
+    this.reservation = form.value as Reservation;
+    console.log('submitted form', form.value);
 
     this.loading++;
     this.submitting = true;
