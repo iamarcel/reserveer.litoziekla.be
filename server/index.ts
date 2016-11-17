@@ -187,9 +187,7 @@ app.post('/api/v1/reservations', (req, res) => {
 
         console.log('[NICE] All done processing the reservation\n\n');
 
-        res.status(201).json({
-          status: 'Created'
-        });
+        res.status(201).json(data.body);
       }
     });
 });
