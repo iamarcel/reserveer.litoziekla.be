@@ -68,7 +68,7 @@ login.subscribe(result => console.log('[LOG] Logged in to Salesforce.'),
 const CAMPAIGN_FIELDS = 'Id,Name,Maximum_Opportunities__c,MaximumProducts__c,Hero_Image__c,'
     + 'StartDate,EndDate,NumberOfOpportunities,NumberOfProducts__c,'
     + 'Location__c,RecordTypeId,RecordType.Name,RecordType.DeveloperName,'
-    + 'DefaultPricebook2__c,Entrance__c';
+    + 'DefaultPricebook2__c,Entrance__c,IsActive';
 const productionSubject = new Subject();
 const production = productionSubject.last().cache(1);
 login.last().subscribe(_ => {

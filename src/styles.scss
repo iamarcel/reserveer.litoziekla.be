@@ -56,3 +56,17 @@ md-card {
   height: 1em;
   width: auto;
 }
+
+.item.disabled {
+  opacity: .5;
+}
+
+.ui.messenger.button {
+  color: white;
+  background: #007FFF;
+}
+
+.icon > svg {
+  width: 1em;
+  height: 100%;
+}
