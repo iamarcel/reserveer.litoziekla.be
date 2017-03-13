@@ -33,5 +33,6 @@ export const getSponsors = (data: [Connection, Campaign]) => {
         .map((o: Opportunity) => {
             o.Logo__c = o.Logo__c.replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
             return o;
-        });
+        })
+        .toArray();
 };

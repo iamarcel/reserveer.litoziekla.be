@@ -17,15 +17,18 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/reduce';
-import 'rxjs/add/operator/cache';
+import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/toArray';
+import 'rxjs/add/operator/take';
 const RxHttpRequest = require('rx-http-request').RxHttpRequest;
 
 import { AppData } from '../src/app/app-data';
@@ -35,8 +38,8 @@ import { Campaign } from '../src/app/reservations/models/campaign';
 import { PricebookEntry } from '../src/app/reservations/models/pricebook-entry';
 import { Reservation } from '../src/app/reservations/models/reservation';
 
-import { resolveContact } from './resolve-contact';
-import { addOpportunityItems } from './add-opportunity-items';
+// import { resolveContact } from './resolve-contact';
+// import { addOpportunityItems } from './add-opportunity-items';
 import { getSponsors } from './get-sponsors';
 import { postToTeam } from './post-to-team';
 
@@ -53,14 +56,19 @@ const PORT = process.env.PORT || 3000;
 ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e').start();
 
 // Set up a Salesforce connection
-console.log('[LOG] Logging in to Salesforce...');
 const connection = new JSForce.Connection({
-    loginUrl: SETTINGS['salesforce']['url']
+  loginUrl: SETTINGS['salesforce']['url']
 });
-const login = Observable.fromPromise(
-    connection.login(SETTINGS['salesforce']['auth']['user'],
-                     SETTINGS['salesforce']['auth']['pass']))
-    .map(x => connection).last().cache(1) as Observable<JSForce.Connection>;
+
+// Log in every hour
+const login =
+  Observable.interval(1000 * 60 * 60).startWith(0)
+  .switchMap(_ => {
+    console.log('[LOG] Logging in to Salesforce...');
+    return Observable.fromPromise(
+      connection.login(SETTINGS['salesforce']['auth']['user'],
+                       SETTINGS['salesforce']['auth']['pass']))
+  }).map(x => connection).publishReplay(1).refCount() as Observable<JSForce.Connection>;
 login.subscribe(result => console.log('[LOG] Logged in to Salesforce.'),
                 err => console.error('[ERROR] while logging in to Salesforce:\n', err));
 
@@ -70,8 +78,13 @@ const CAMPAIGN_FIELDS = 'Id,Name,Maximum_Opportunities__c,MaximumProducts__c,Her
     + 'Location__c,RecordTypeId,RecordType.Name,RecordType.DeveloperName,'
     + 'DefaultPricebook2__c,Entrance__c,IsActive';
 const productionSubject = new Subject();
-const production = productionSubject.last().cache(1);
-login.last().subscribe(_ => {
+const production = productionSubject.publishReplay(1).refCount();
+
+const sponsors = Observable.combineLatest(login, production)
+    .mergeMap(getSponsors)
+    .publishReplay(1).refCount();
+
+login.subscribe(_ => {
     console.log('[LOG] Caching current production...');
     (connection as any).sobject('Campaign')
         .find({
@@ -95,11 +108,10 @@ login.last().subscribe(_ => {
             let campaign = records[0];
             let html = campaign.Hero_Image__c;
             campaign.Hero_Image__c =
-                html.replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
+                (html || '').replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
 
             console.log('[LOG] Parsed current production\n');
             productionSubject.next(records[0]);
-            productionSubject.complete();
         });
 });
 production.subscribe(result => console.log('[LOG] Production updated.'),
@@ -109,7 +121,7 @@ const PRICEBOOKENTRY_FIELDS = 'Id,Name,Pricebook2Id,Product2Id,'
     + 'UnitPrice,UseStandardPrice,'
     + 'Product2.Id,Product2.Description,Product2.Name';
 const productsObservable = production
-    .mergeMap((campaign: Campaign) => {
+    .switchMap((campaign: Campaign) => {
         console.log('[LOG] Caching products...');
         return Observable.create((observer: Observer<PricebookEntry[]>) => {
             (connection as any).sobject('PricebookEntry')
@@ -123,14 +135,9 @@ const productsObservable = production
                 });
         });
     });
-const products = productsObservable.last().cache(1);
+const products = productsObservable.publishReplay(1).refCount();
 products.subscribe(result => console.log('[LOG] Products updated.'),
                    err => console.error('[ERROR] while caching products:\n', err));
-
-const sponsors = Observable.forkJoin(login, production)
-    .mergeMap(getSponsors)
-    .toArray()
-    .last().cache(1);
 
 
 
@@ -143,15 +150,15 @@ app.use(express.static(__dirname + '/dist'));
 let appData = new AppData();
 const mockData = appData.createDb();
 app.get('/api/v1/current/productions', (req, res) => {
-    production.subscribe((result) => res.json(result));
+  production.take(1).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/tickets', (req, res) => {
-    products.subscribe((result) => res.json(result));
+  products.take(1).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/sponsors', (req, res) => {
-    sponsors.subscribe(sponsors => res.json(sponsors));
+  sponsors.take(1).subscribe(sponsors => res.json(sponsors));
 });
 
 app.get('/api/v1/recordTypes', (req, res) => {
