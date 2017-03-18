@@ -9,7 +9,7 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
-$lito-app-primary: mat-palette($mat-grey);
+$lito-app-primary: mat-palette($mat-amber);
 $lito-app-accent:  mat-palette($mat-pink, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
@@ -103,4 +103,43 @@ md-input-container {
 
 .mat-toolbar {
   background: #222;
+}
+
+.steps {
+  list-style-type: none;
+  display: flex;
+  flex-direction: horizontal;
+  justify-content: space-around;
+  padding: 0;
+
+  &__step {
+    display: block;
+  }
+
+  &__step-title {
+    display: none;
+    text-align: center;
+    margin-top: 0;
+  }
+
+  &__step-number {
+    display: block;
+    text-align: center;
+    color: rgba(0,0,0,.4);
+  }
+
+  &__step--selected {
+    .steps__step-number, .steps__step-title {
+      display:block;
+    }
+
+    .steps__step-number {
+      color: rgba(0,0,0,.7);
+    }
+  }
+}
+
+button[type=submit] {
+  display: block;
+  width: 100%;
 }

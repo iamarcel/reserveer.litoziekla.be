@@ -1,23 +1,25 @@
-<div [formGroup]="form">
-  <div class="ui right floated content">
-    <div class="ui input buttons">
-      <div class="ui basic icon button" (click)="removeTicket()">
-        <i class="ui minus circle icon"></i>
-      </div>
-      <input type="number" style="width: 4em"
-             formControlName="amount">
-      <div class="ui basic icon button" (click)="addTicket()">
-        <i class="ui add circle icon"></i>
-      </div>
-    </div>
-  </div>
-
+<div [formGroup]="form" class="ticket-line-item">
   <div class="content">
     <div class="header">
       {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
     </div>
-    <div class="description">
+    <div class="description mdc-typography--body1">
       <p>{{ ticket.ticketType.Product2.Description }}</p>
     </div>
   </div>
+
+  <div class="number-input">
+    <a md-icon-button class="number-input__button" (click)="removeTicket()">
+      <md-icon>remove_circle_outline</md-icon>
+    </a>
+    <md-input-container>
+      <input mdInput
+             placeholder="Aantal"
+             formControlName="amount">
+    </md-input-container>
+    <a md-icon-button class="number-input__button" (click)="addTicket()">
+      <md-icon>add_circle_outline</md-icon>
+    </a>
+  </div>
+
 </div>

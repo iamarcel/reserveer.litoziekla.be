@@ -1,0 +1,24 @@
+.ticket-line-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.number-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .mat-input-container {
+    flex: 1 0 4em;
+    margin-top: 0;
+  }
+
+  &__button:first-child {
+    margin-right: 0.5em;
+  }
+
+  &__button:last-child {
+    margin-left: 0.5em;
+  }
+}
