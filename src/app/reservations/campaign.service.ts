@@ -6,8 +6,9 @@ import { ApiService } from '../api.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/last';
-import 'rxjs/add/operator/cache';
+import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/map';
+import 'rxjs/Rx';
 
 import { Campaign } from './models/campaign';
 import { Opportunity } from './models/opportunity';
@@ -35,7 +36,7 @@ export class CampaignService {
     if (!this._production) {
       this._production = this.http.get(this.currentProductionUrl)
         .map(response => response.json() as Campaign)
-        .last().cache(1);
+        .last().publishReplay(1).refCount();
     }
     return this._production;
     // TODO: Catch errors
@@ -45,7 +46,7 @@ export class CampaignService {
     if (!this._ticketTypes) {
       this._ticketTypes = this.http.get(this.ticketsUrl)
         .map(response => response.json() as Product2[])
-        .last().cache(1);
+        .last().publishReplay(1).refCount();
     }
     return this._ticketTypes;
     // TODO: Catch errors
@@ -55,7 +56,7 @@ export class CampaignService {
     if (!this._sponsors) {
       this._sponsors = this.http.get(this.sponsorsUrl)
         .map(response => response.json() as Opportunity[])
-        .last().cache(1);
+        .last().publishReplay(1).refCount();
     }
     return this._sponsors;
   }

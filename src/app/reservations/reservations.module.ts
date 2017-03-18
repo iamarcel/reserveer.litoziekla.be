@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgSemanticModule } from 'ng-semantic';
+import { MaterialModule } from '@angular/material';
 
 import { ReservationsComponent } from './reservations.component';
 
@@ -13,7 +13,7 @@ import { TicketLineItemComponent } from './ticket-line-item/ticket-line-item.com
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgSemanticModule
+    MaterialModule
   ],
   declarations: [
     ReservationsComponent,

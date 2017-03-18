@@ -1,7 +1,6 @@
 import { Component, ViewContainerRef } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray,
          AbstractControl, Validators } from '@angular/forms';
-import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 
@@ -66,7 +65,8 @@ export class ReservationsComponent {
     },
     'Tickets': {
       'ticketAmount': 'Je moet minstens één ticket kiezen.'
-    }
+    },
+    'Description': {}
   };
 
 
@@ -128,6 +128,7 @@ export class ReservationsComponent {
       'LastName': ['', Validators.required],
       'Email': ['', [Validators.required, emailValidator]],
       'Phone': '',
+      'Description': '',
       'Tickets': this.fb.array((this.reservation.Tickets || []).map(
         t => this.fb.group({
           'amount': [0],

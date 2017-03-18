@@ -1,171 +1,167 @@
-<form
-    [formGroup]="form"
-    (ngSubmit)="submit(form)"
-    [class.loading]="loading > 0"
-    class="ui form fluid card">
+<div class="ui message">
+  <p>
+    Vragen of problemen? Laat ons gerust iets weten.
+  </p>
+  <a md-button class="ui button item" href="mailto:info@litoziekla.be">
+    Email
+  </a>
+  <a md-button class="fb-messenger-button">
+    <span class="icon">
+      <svg enable-background="new 0 0 128 128" id="Social_Icons" version="1.1" viewBox="0 0 128 128" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="_x34__stroke">
+          <g id="Facebook_Messenger_1_">
+            <rect clip-rule="evenodd" fill="none" fill-rule="evenodd" height="128" width="128"/>
+            <path clip-rule="evenodd" d="M70.36,79.802L54.062,62.42    L22.261,79.802l34.981-37.136l16.696,17.383l31.404-17.383L70.36,79.802z M64,0C28.654,0,0,26.531,0,59.259    c0,18.649,9.307,35.283,23.851,46.146V128l21.791-11.96c5.816,1.609,11.977,2.478,18.358,2.478c35.346,0,64-26.531,64-59.259    S99.346,0,64,0z" fill="#FFFFFF" fill-rule="evenodd" id="Facebook_Messenger"/>
+          </g>
+        </g>
+      </svg>
+    </span>
+    Facebook Messenger
+  </a>
+</div>
 
-  <div class="hero image"
-       *ngIf="production"
-       [innerHTML]="production.Hero_Image__c"></div>
+<md-card>
 
-  <div *ngIf="production" class="content">
 
-    <h1 class="header">
-      Reserveren voor {{ production.Name }}
-    </h1>
-    <div class="ui message">
-      <p>
-        Vragen of problemen? Laat ons gerust iets weten.
-      </p>
-      <div class="ui horizontal list">
-        <div class="item">
-          <a class="ui button item" href="mailto:info@litoziekla.be">
-            Email
-          </a>
-        </div>
-        <div class="item">
-          <a class="ui messenger labeled icon button item" href="//m.me/litoziekla" target="_blank">
-            <span class="icon">
-              <svg enable-background="new 0 0 128 128" id="Social_Icons" version="1.1" viewBox="0 0 128 128" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g id="_x34__stroke">
-                  <g id="Facebook_Messenger_1_">
-                    <rect clip-rule="evenodd" fill="none" fill-rule="evenodd" height="128" width="128"/>
-                    <path clip-rule="evenodd" d="M70.36,79.802L54.062,62.42    L22.261,79.802l34.981-37.136l16.696,17.383l31.404-17.383L70.36,79.802z M64,0C28.654,0,0,26.531,0,59.259    c0,18.649,9.307,35.283,23.851,46.146V128l21.791-11.96c5.816,1.609,11.977,2.478,18.358,2.478c35.346,0,64-26.531,64-59.259    S99.346,0,64,0z" fill="#FFFFFF" fill-rule="evenodd" id="Facebook_Messenger"/>
-                  </g>
-                </g>
-              </svg>
-            </span>
-            Facebook Messenger
-          </a>
-        </div>
-      </div>
-    </div>
+  <form
+      [formGroup]="form"
+      (ngSubmit)="submit(form)"
+      [class.loading]="loading > 0">
 
-    <div *ngIf="!show">
+    <div class="hero image"
+         *ngIf="production"
+         [innerHTML]="production.Hero_Image__c"></div>
 
-      <h3 class="ui dividing header">
-        De voorstelling
-      </h3>
-      <p>
-        <strong>Locatie:</strong> {{ production.Location__c }}
-      </p>
-      <p>Kies een voorstelling:</p>
+    <div *ngIf="production" class="content">
 
-      <sm-list class="very relaxed selection">
-        <a class="item"
-           (click)="setShow(show)"
-           [class.disabled]="!show.IsActive"
-           *ngFor="let show of production.ChildCampaigns.records">
-          <div class="right floated middle aligned content">
-            <button class="ui mini icon primary button" type="button">
-              <i class="angle double right icon"></i>
-            </button>
-          </div>
-          <div class="middle aligned content">
-            <div class="header">
+      <md-card-header>
+        <md-card-title>
+          Reserveren voor {{ production.Name }}
+        </md-card-title>
+      </md-card-header>
+
+      <div *ngIf="!show">
+
+        <h3 class="mdc-typography--subheading2">
+          De voorstelling
+        </h3>
+        <p>
+          <strong>Locatie:</strong> {{ production.Location__c }}
+        </p>
+        <p>Kies een voorstelling:</p>
+
+        <md-nav-list>
+          <md-list-item class="item"
+                        (click)="setShow(show)"
+                        [class.disabled]="!show.IsActive"
+                        *ngFor="let show of production.ChildCampaigns.records">
+            <md-icon md-list-icon>chevron_right</md-icon>
+            <h4 md-line>
               {{ show.Entrance__c }}
-            </div>
-            <p class="mdl-typography--caption"  *ngIf="!showIsFull(show)">
+            </h4>
+            <p md-line *ngIf="!showIsFull(show)">
               {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
             </p>
-            <p class="mdl-typography--caption" *ngIf="showIsFull(show)">
+            <p md-line *ngIf="showIsFull(show)">
               Sorry, volzet!
             </p>
+          </md-list-item>
+        </md-nav-list>
+      </div>
+
+      <div *ngIf="show">
+        <h3 class="mdc-typography--subheading2">
+          De voorstelling
+        </h3>
+        <p>
+          <strong>Locatie:</strong> {{ production.Location__c }}
+        </p>
+        <p>
+          <strong>Aanvang:</strong> {{ show.Entrance__c }}
+        </p>
+
+        <div *ngIf="!submitted">
+          <h3 class="mdc-typography--subheading2">Jouw gegevens</h3>
+          <p>Velden met een * zijn verplicht.</p>
+          <md-input-container class="">
+            <input mdInput type="text"
+                   placeholder="Voornaam"
+                   formControlName="FirstName">
+          </md-input-container>
+          <md-input-container class="">
+            <input mdInput type="text"
+                   placeholder="Achternaam"
+                   required
+                   formControlName="LastName">
+          </md-input-container>
+          <md-input-container class="">
+            <input mdInput type="email"
+                   placeholder="E-mailadres"
+                   required
+                   formControlName="Email">
+          </md-input-container>
+          <md-input-container class="">
+            <input mdInput type="tel"
+                   placeholder="Telefoonnummer"
+                   formControlName="Phone">
+          </md-input-container>
+          <md-input-container>
+            <textarea mdInput
+                      placeholder="Nog opmerkingen?"
+                      formControlName="Description">
+            </textarea>
+          </md-input-container>
+
+          <div *ngIf="reservation.Tickets">
+            <h3 class="mdc-typography--subheading2">Je tickets</h3>
+            <md-list formArrayName="Tickets">
+              <md-list-item *ngFor="let ticket of reservation.Tickets; let i = index">
+                <app-ticket-line-item [form]="form.controls.Tickets.controls[i]"
+                                      [ticket]="ticket"
+                                      (add)="addTicket(ticket)"
+                                      (remove)="removeTicket(ticket)"></app-ticket-line-item>
+              </md-list-item>
+            </md-list>
           </div>
-        </a>
-      </sm-list>
-    </div>
 
-    <div *ngIf="show">
-      <h3 class="ui dividing header">
-        De voorstelling
-      </h3>
-      <p>
-        <strong>Locatie:</strong> {{ production.Location__c }}
-      </p>
-      <p>
-        <strong>Aanvang:</strong> {{ show.Entrance__c }}
-      </p>
-
-      <div *ngIf="!submitted">
-        <h3 class="ui dividing header">Jouw gegevens</h3>
-        <p>Velden met een * zijn verplicht.</p>
-        <div class="field">
-          <sm-input type="text"
-                    label="Voornaam"
-                    placeholder="Voornaam..."
-                    formControlName="FirstName"></sm-input>
-        </div>
-        <div class="field">
-          <sm-input type="text"
-                    label="Achternaam"
-                    placeholder="Achternaam..."
-                    required
-                    formControlName="LastName"></sm-input>
-        </div>
-        <div class="field">
-          <sm-input type="email"
-                    label="E-mailadres"
-                    placeholder="mijn@email.com..."
-                    required
-                    formControlName="Email"></sm-input>
-        </div>
-        <div class="field">
-          <sm-input type="tel"
-                    label="Telefoonnummer"
-                    placeholder="Telefoonnummer..."
-                    formControlName="Phone"></sm-input>
         </div>
 
-        <div *ngIf="reservation.Tickets">
-          <h3 class="ui dividing header">Je tickets</h3>
-          <div class="ui very relaxed list field" formArrayName="Tickets">
-            <app-ticket-line-item *ngFor="let ticket of reservation.Tickets; let i = index"
-                                  [form]="form.controls.Tickets.controls[i]"
-                                  [ticket]="ticket"
-                                  (add)="addTicket(ticket)"
-                                  (remove)="removeTicket(ticket)"
-                                  class="item"></app-ticket-line-item>
+        <div *ngIf="formErrors.length > 0" class="ui negative message">
+          <div class="header">
+            Oeps, dat ziet er niet goed uit!
+          </div>
+          <ul class="list">
+            <li *ngFor="let error of formErrors">
+              {{ error }}
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="submitted"
+             class="ui positive icon message">
+          <i class="ui checkmark icon"></i>
+          <div class="content">
+            <h3 class="header">Staat genoteerd!</h3>
+            <p>Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
           </div>
         </div>
 
+
       </div>
+    </div><!-- Card content -->
 
-      <div *ngIf="formErrors.length > 0" class="ui negative message">
-        <div class="header">
-          Oeps, dat ziet er niet goed uit!
-        </div>
-        <ul class="list">
-          <li *ngFor="let error of formErrors">
-            {{ error }}
-          </li>
-        </ul>
-      </div>
+    <button type="submit"
+            class="ui primary bottom attached primary button"
+            (click)="validate(true)"
+            [disabled]="submitting" *ngIf="show && !submitted">
+      Reserveer
+    </button>
 
-      <div *ngIf="submitted"
-           class="ui positive icon message">
-        <i class="ui checkmark icon"></i>
-        <div class="content">
-          <h3 class="header">Staat genoteerd!</h3>
-          <p>Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
-        </div>
-      </div>
+  </form>
+</md-card>
 
-
-    </div>
-  </div><!-- Card content -->
-
-  <button type="submit"
-          class="ui primary bottom attached primary button"
-          (click)="validate(true)"
-          [disabled]="submitting" *ngIf="show && !submitted">
-    Reserveer
-  </button>
-
-</form>
-
-<div class="ui segment container"
-     [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
+<md-card
+    [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
   <h2 class="ui header">Met dank aan onze sponsors</h2>
   <p class="ui sub header">Zij maakten deze productie mogelijk!</p>
   <div class="ui grid">
@@ -173,7 +169,7 @@
       <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
     </div>
   </div>
-</div>
+</md-card>
 
 <div class="ui negative message"
      *ngIf="error">
