@@ -273,6 +273,7 @@ export class ReservationsComponent {
         this.tagService.push({
           'event': 'purchase',
           'ecommerce': {
+            'currencyCode': 'EUR',
             'purchase': {
               'actionField': {
                 'id': opportunity ? opportunity.Id : 'UNKNOWN_OPPORTUNITY',
@@ -296,6 +297,7 @@ export class ReservationsComponent {
       'name': t.ticketType.Name,
       'id': t.ticketType.Id,
       'category': this.show.Name,
+      'list': this.show.Name,
       'price': t.ticketType.UnitPrice,
       'quantity': t.amount
     }));
