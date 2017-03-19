@@ -88,7 +88,7 @@
         </ul>
 
         <!-- STEP 2 -->
-        <div formArrayName="Tickets"><!-- FIXME Remove always true -->
+        <div formArrayName="Tickets">
           <h3 class="mdc-typography--subheading2">Hoe veel tickets wil je?</h3>
           <div *ngFor="let ticket of reservation.Tickets; let i = index">
             <app-ticket-line-item [form]="form.controls.Tickets.controls[i]"
