@@ -208,6 +208,12 @@ export class ReservationsComponent {
     });
   }
 
+  totalAmount() {
+    let r = new Reservation();
+    Object.assign(r, this.form.value);
+    return r.totalAmount;
+  }
+
   validate(ignoreDirty?: boolean) {
     if (!this.form) {
       return;

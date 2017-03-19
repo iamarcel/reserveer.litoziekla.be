@@ -9,8 +9,8 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
-$lito-app-primary: mat-palette($mat-amber);
-$lito-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$lito-app-primary: mat-palette($mat-blue);
+$lito-app-accent:  mat-palette($mat-amber, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
 $lito-app-warn:    mat-palette($mat-red);
@@ -28,7 +28,7 @@ $lito-app-theme: mat-light-theme($lito-app-primary, $lito-app-accent, $lito-app-
 // Variables and mixins
 
 body {
-    font-family: Lato, 'Source Sans Pro', 'Roboto', 'Helvetica Neue', sans-serif;
+    font-family: 'Roboto', 'Source Sans Pro','Helvetica Neue', sans-serif;
     padding: 0;
     margin: 0;
 }
@@ -58,9 +58,15 @@ form md-input {
 }
 
 main {
-    padding: 10px;
-    background: #fafafa;
+    background: #fff;
     margin: 0;
+}
+
+.content {
+  background: #fff;
+  padding: 10px;
+  max-width: 600px;
+  margin: auto;
 }
 
 md-card {
@@ -80,6 +86,7 @@ md-card {
 md-toolbar .logo {
   height: 1em;
   width: auto;
+  margin-right: 0.5em;
 }
 
 .item.disabled {
@@ -103,6 +110,7 @@ md-input-container {
 
 .mat-toolbar {
   background: #222;
+  color: white;
 }
 
 .steps {
@@ -142,4 +150,118 @@ md-input-container {
 button[type=submit] {
   display: block;
   width: 100%;
+}
+
+.show-radio-button {
+  width: 100%;
+  margin: 5px;
+
+  label {
+    width: 100%;
+  }
+}
+
+md-radio-button p {
+  margin: 0;
+}
+
+.mat-radio-label {
+  align-items: center;
+}
+
+
+
+.stepper {
+  // Reset
+  counter-reset: stepper;
+  margin: 0;
+  padding: 0;
+
+  &__step {
+    max-height: 1500px;
+    transition: max-height 0.3s ease-out;
+  }
+
+  & > li {
+    position: relative;
+
+    margin: 0 0 0 1em;
+    line-height: 2em;
+    padding: 0 10px;
+    padding-left: 2em;
+    padding-bottom: 3em;
+
+    border-left: 1px solid rgba(black, .12);
+
+    &:before {
+      content: counter(stepper);
+      counter-increment: stepper;
+
+      position: absolute;
+      top: 0;
+      left: -1em;
+      width: 2em;
+      height: 2em;
+      text-align: center;
+      border-radius: 50%;
+      background: map-get($lito-app-primary, default);
+
+      color: #fff;
+
+      box-shadow: 0 0 0 0.5rem #fff;
+    }
+  }
+
+  &__step.disabled {
+    color: rgba(black, 0.38);
+    max-height: 2em;
+
+    &:before {
+      background: #ddd;
+    }
+
+    *:not(.stepper__step-title) {
+      opacity: 0;
+    }
+  }
+
+  &__step.done:before {
+    content: "✓";
+    background-color: map-get($mat-green, A700);
+  }
+
+  &__step-title {
+    display: block;
+  }
+}
+
+.form-errors {
+  background: map-get($lito-app-warn, 50);
+  border: 1px solid map-get($lito-app-warn, 200);
+  color: map-get($lito-app-warn, 900);
+  padding: 0.5em;
+  margin: 1em 0;
+  font-size: 12px;
+  line-height: 16px;
+
+  ul {
+    padding-left: 1em;
+
+    & > li {
+      margin: 0.5em;
+    }
+  }
+}
+
+.sponsor-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+
+  & > * {
+    width: 30%;
+    padding: 1%;
+  }
 }

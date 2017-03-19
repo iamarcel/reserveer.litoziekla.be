@@ -1,11 +1,12 @@
 <div [formGroup]="form" class="ticket-line-item">
-  <div class="content">
-    <div class="header">
+  <div>
+    <span class="mdc-typography--body2">
       {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
-    </div>
-    <div class="description mdc-typography--body1">
-      <p>{{ ticket.ticketType.Product2.Description }}</p>
-    </div>
+    </span>
+    <p class="mdc-typography--body1"
+       style="margin-top: 0;">
+      {{ ticket.ticketType.Product2.Description }}
+    </p>
   </div>
 
   <div class="number-input">
@@ -14,7 +15,7 @@
     </a>
     <md-input-container>
       <input mdInput
-             placeholder="Aantal"
+             [placeholder]="ticket.ticketType.Name + 's'"
              formControlName="amount">
     </md-input-container>
     <a md-icon-button class="number-input__button" (click)="addTicket()">

@@ -21,86 +21,57 @@
      </div> -->
 
 
+<div *ngIf="production">
 
-<md-card>
-  <form
-      [formGroup]="form"
-      (ngSubmit)="submit(form)"
-      [class.loading]="loading > 0">
+  <div class="hero image"
+       *ngIf="production"
+       [innerHTML]="production.Hero_Image__c"></div>
 
-    <div *ngIf="production" class="content">
+  <form class="content"
+        [formGroup]="form"
+        (ngSubmit)="submit(form)"
+        [class.loading]="loading > 0">
 
-      <md-card-header>
-        <md-card-title>
-          {{ production.Name }}
-        </md-card-title>
-        <md-card-subtitle>Reserveer tickets bij Litoziekla</md-card-subtitle>
-      </md-card-header>
+    <h1 class="mdc-typography--headline" style="margin: 0.5rem 0 0.5rem 3rem">
+      Reserveer je tickets voor {{ production.Name }}
+    </h1>
 
-      <div md-card-image class="hero image"
-           *ngIf="production"
-           [innerHTML]="production.Hero_Image__c"></div>
+    <ol class="stepper">
+      <li class="stepper__step"
+          [class.done]="show">
+        <h2 class="stepper__step-title mdc-typography--title">Voorstelling</h2>
+        <h3 class="mdc-typography--subheading2">Waar?</h3>
+        <p class="mdc-typography--body1">{{ production.Location__c }}</p>
 
-      <md-card-content>
+        <h3 class="mdc-typography--subheading2">Wanneer?</h3>
+        <md-radio-group>
+          <md-radio-button [value]="show.Id"
+                           (click)="setShow(show)"
+                           class="show-radio-button"
+                           [class.disabled]="!show.IsActive"
+                           *ngFor="let show of production.ChildCampaigns.records">
+            <p class="mdc-typography--body2">{{ show.Entrance__c }}</p>
+            <span class="mdc-typography--body1">
+              <span *ngIf="!showIsFull(show)">
+                {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+              </span>
+              <span *ngIf="showIsFull(show)">
+                Sorry, volzet!
+              </span>
+            </span>
+          </md-radio-button>
+        </md-radio-group>
+      </li>
 
-        <ul class="steps">
-          <li class="steps__step steps__step--selected">
-            <span class="steps__step-number mdc-typography--display1">1</span>
-            <h3 class="steps__step-title mdc-typography--headline">Voorstelling</h3>
-          </li>
-          <li class="steps__step">
-            <span class="steps__step-number mdc-typography--display1">2</span>
-            <h3 class="steps__step-title mdc-typography--headline">Tickets</h3>
-          </li>
-          <li class="steps__step">
-            <span class="steps__step-number mdc-typography--display1">3</span>
-            <h3 class="steps__step-title mdc-typography--headline">Contactgegevens</h3>
-          </li>
-        </ul>
-        <p>
-          <strong>Locatie:</strong> {{ production.Location__c }}
-        </p>
 
-        <md-nav-list>
-          <h3 md-subheader>Wanneer wil je komen kijken?</h3>
-          <md-list-item class="item"
-                        (click)="setShow(show)"
-                        [class.disabled]="!show.IsActive"
-                        *ngFor="let show of production.ChildCampaigns.records">
-            <h4 md-line>
-              {{ show.Entrance__c }}
-            </h4>
-            <p md-line *ngIf="!showIsFull(show)">
-              {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
-            </p>
-            <p md-line *ngIf="showIsFull(show)">
-              Sorry, volzet!
-            </p>
-          </md-list-item>
-        </md-nav-list>
-      </md-card-content>
 
-      <div *ngIf="show">
-
+      <li class="stepper__step"
+          [class.done]="totalAmount() > 0"
+          [class.disabled]="!show">
+        <span class="stepper__step-title mdc-typography--title">Tickets</span>
         <!-- STEP 2 -->
-        <!-- ====== -->
-        <!-- TICKETS -->
-        <ul class="steps">
-          <li class="steps__step">
-            <span class="steps__step-number mdc-typography--display1">1</span>
-            <h3 class="steps__step-title mdc-typography--headline">Voorstelling</h3>
-          </li>
-          <li class="steps__step steps__step--selected">
-            <span class="steps__step-number mdc-typography--display1">2</span>
-            <h3 class="steps__step-title mdc-typography--headline">Tickets</h3>
-          </li>
-          <li class="steps__step">
-            <span class="steps__step-number mdc-typography--display1">3</span>
-            <h3 class="steps__step-title mdc-typography--headline">Contactgegevens</h3>
-          </li>
-        </ul>
-
-        <div formArrayName="Tickets">
+        <div formArrayName="Tickets"><!-- FIXME Remove always true -->
+          <h2 class="mdc-typography--subheading2">Hoe veel tickets wil je?</h2>
           <div *ngFor="let ticket of reservation.Tickets; let i = index">
             <app-ticket-line-item [form]="form.controls.Tickets.controls[i]"
                                   [ticket]="ticket"
@@ -108,67 +79,55 @@
                                   (remove)="removeTicket(ticket)"></app-ticket-line-item>
           </div>
         </div>
+      </li>
 
-        <div *ngIf="reservation.Tickets">
-          <!-- STEP 3 -->
-          <!-- ====== -->
-          <!-- CONTACT INFO -->
-            <ul class="steps">
-              <li class="steps__step">
-                <span class="steps__step-number mdc-typography--display1">1</span>
-                <h3 class="steps__step-title mdc-typography--headline">Voorstelling</h3>
-              </li>
-              <li class="steps__step">
-                <span class="steps__step-number mdc-typography--display1">2</span>
-                <h3 class="steps__step-title mdc-typography--headline">Tickets</h3>
-              </li>
-              <li class="steps__step steps__step--selected">
-                <span class="steps__step-number mdc-typography--display1">3</span>
-                <h3 class="steps__step-title mdc-typography--headline">Contactgegevens</h3>
-              </li>
-            </ul>
 
-            <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
-            <md-input-container class="">
-              <input mdInput type="text"
-                     placeholder="Voornaam"
-                     formControlName="FirstName">
-            </md-input-container>
-            <md-input-container class="">
-              <input mdInput type="text"
-                     placeholder="Achternaam"
-                     required
-                     formControlName="LastName">
-            </md-input-container>
-            <md-input-container class="">
-              <input mdInput type="email"
-                     placeholder="E-mailadres"
-                     required
-                     formControlName="Email">
-            </md-input-container>
-            <md-input-container>
-              <input mdInput type="tel"
-                     placeholder="Telefoonnummer"
-                     formControlName="Phone">
-            </md-input-container>
-            <md-input-container>
-              <textarea mdInput
-                        placeholder="Nog opmerkingen?"
-                        formControlName="Description">
-              </textarea>
-            </md-input-container>
 
-            <div *ngIf="formErrors.length > 0" class="ui negative message">
-              <div class="header">
-                Oeps, dat ziet er niet goed uit!
-              </div>
-              <ul class="list">
-                <li *ngFor="let error of formErrors">
-                  {{ error }}
-                </li>
-              </ul>
-            </div>
+      <li class="stepper__step"
+          [class.done]="form.valid"
+          [class.disabled]="totalAmount() <= 0">
+        <span class="stepper__step-title mdc-typography--title">Contactgegevens</span>
+        <!-- STEP 3 -->
+        <h3 class="mdc-typography--subheading2">Hoe kunnen we je bereiken?</h3>
 
+        <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
+
+        <md-input-container class="">
+          <input mdInput type="text"
+                 placeholder="Voornaam"
+                 formControlName="FirstName">
+        </md-input-container>
+        <md-input-container class="">
+          <input mdInput type="text"
+                 placeholder="Achternaam"
+                 required
+                 formControlName="LastName">
+        </md-input-container>
+        <md-input-container class="">
+          <input mdInput type="email"
+                 placeholder="E-mailadres"
+                 required
+                 formControlName="Email">
+        </md-input-container>
+        <md-input-container>
+          <input mdInput type="tel"
+                 placeholder="Telefoonnummer"
+                 formControlName="Phone">
+        </md-input-container>
+        <md-input-container>
+          <textarea mdInput
+                    placeholder="Nog opmerkingen?"
+                    formControlName="Description">
+          </textarea>
+        </md-input-container>
+
+        <div *ngIf="formErrors.length > 0" class="form-errors mdc-typography--body1">
+          <span>Oeps, ik denk dat je een foutje hebt getypt. Kijk je het nog even na?</span>
+          <ul>
+            <li *ngFor="let error of formErrors">
+              {{ error }}
+            </li>
+          </ul>
         </div>
 
 
@@ -182,29 +141,27 @@
         </div>
 
 
-      </div>
-    </div><!-- Card content -->
-
-    <button md-raised-button color="primary"
-            type="submit"
-            (click)="validate(true)"
-            [disabled]="submitting" *ngIf="show && !submitted">
-      RESERVEER MIJN TICKETS
-    </button>
+        <button md-raised-button color="primary"
+                type="submit"
+                (click)="validate(true)"
+                [disabled]="submitting || !form.valid" *ngIf="show && !submitted">
+          RESERVEER MIJN TICKETS
+        </button>
+      </li>
+    </ol>
 
   </form>
-</md-card>
+</div>
 
-<md-card
+<div
+    class="content"
     [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
-  <h2 class="ui header">Met dank aan onze sponsors</h2>
-  <p class="ui sub header">Zij maakten deze productie mogelijk!</p>
-  <div class="ui grid">
-    <div class="doubling four column sponsors row">
-      <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
-    </div>
+  <h2 class="mdc-typography--headline">Met dank aan onze sponsors</h2>
+  <p class="mdc-typography--body1">Zij maakten deze productie mogelijk!</p>
+  <div class="sponsor-grid">
+    <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
   </div>
-</md-card>
+</div>
 
 <div class="ui negative message"
      *ngIf="error">
