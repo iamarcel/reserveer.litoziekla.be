@@ -38,8 +38,14 @@
 
     <ol class="stepper">
       <li class="stepper__step"
+          [class.disabled]="submitted"
           [class.done]="show">
         <h2 class="stepper__step-title mdc-typography--title">Voorstelling</h2>
+        <ul class="stepper__step-summary mdc-typography--caption" *ngIf="show">
+          <li>{{ production.Location__c }}</li>
+          <li>{{ show.Entrance__c }}</li>
+        </ul>
+
         <h3 class="mdc-typography--subheading2">Waar?</h3>
         <p class="mdc-typography--body1">{{ production.Location__c }}</p>
 
@@ -67,11 +73,20 @@
 
       <li class="stepper__step"
           [class.done]="totalAmount() > 0"
-          [class.disabled]="!show">
-        <span class="stepper__step-title mdc-typography--title">Tickets</span>
+          [class.disabled]="!show || submitted">
+        <h2 class="stepper__step-title mdc-typography--title">Tickets</h2>
+        <ul class="stepper__step-summary mdc-typography--caption">
+          <li *ngFor="let ticket of reservation.Tickets; let i = index">
+            {{ form.controls.Tickets.controls[i].get('amount').value }} &times; {{ ticket.ticketType.Name }}
+          </li>
+          <li>
+            Totaal: {{ totalPrice() | currency:"EUR":true }}
+          </li>
+        </ul>
+
         <!-- STEP 2 -->
         <div formArrayName="Tickets"><!-- FIXME Remove always true -->
-          <h2 class="mdc-typography--subheading2">Hoe veel tickets wil je?</h2>
+          <h3 class="mdc-typography--subheading2">Hoe veel tickets wil je?</h3>
           <div *ngFor="let ticket of reservation.Tickets; let i = index">
             <app-ticket-line-item [form]="form.controls.Tickets.controls[i]"
                                   [ticket]="ticket"
@@ -85,10 +100,15 @@
 
       <li class="stepper__step"
           [class.done]="form.valid"
-          [class.disabled]="totalAmount() <= 0">
-        <span class="stepper__step-title mdc-typography--title">Contactgegevens</span>
+          [class.disabled]="totalAmount() <= 0 || submitted">
+        <h2 class="stepper__step-title mdc-typography--title">Contactgegevens</h2>
         <!-- STEP 3 -->
         <h3 class="mdc-typography--subheading2">Hoe kunnen we je bereiken?</h3>
+        <ul class="stepper__step-summary mdc-typography--caption" *ngIf="show">
+          <li>{{ reservation.FirstName }} {{ reservation.LastName }}</li>
+          <li>{{ reservation.Email }}{{ reservation.Phone ? ', ' + reservation.Phone : '' }}</li>
+          <li>{{ reservation.Description }}</li>
+        </ul>
 
         <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
 
@@ -130,31 +150,31 @@
           </ul>
         </div>
 
-
-        <div *ngIf="submitted"
-             class="ui positive icon message">
-          <i class="ui checkmark icon"></i>
-          <div class="content">
-            <h3 class="header">Staat genoteerd!</h3>
-            <p>Je zal zo dadelijk een bevestigingsmailtje krijgen.</p>
-          </div>
-        </div>
-
-
         <button md-raised-button color="primary"
                 type="submit"
                 (click)="validate(true)"
-                [disabled]="submitting || !form.valid" *ngIf="show && !submitted">
+                [disabled]="submitting || !form.valid">
           RESERVEER MIJN TICKETS
         </button>
+      </li>
+
+
+
+      <li class="stepper__step"
+          [class.disabled]="!(submitting || submitted)"
+          [class.loading]="submitting"
+          [class.done]="submitted">
+        <h2 class="stepper__step-title mdc-typography--title">Bevestiging</h2>
+        <p>
+          Staat genoteerd! Je krijgt zo dadelijk een bevestigingsmailtje op <span>{{ reservation.Email }}</span>.
+        </p>
       </li>
     </ol>
 
   </form>
 </div>
 
-<div
-    class="content"
+<div class="content"
     [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
   <h2 class="mdc-typography--headline">Met dank aan onze sponsors</h2>
   <p class="mdc-typography--body1">Zij maakten deze productie mogelijk!</p>

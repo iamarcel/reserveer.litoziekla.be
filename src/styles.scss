@@ -103,11 +103,6 @@ md-toolbar .logo {
   height: 100%;
 }
 
-md-input-container {
-  display: block !important;
-  margin: 2em 0;
-}
-
 .mat-toolbar {
   background: #222;
   color: white;
@@ -169,6 +164,9 @@ md-radio-button p {
   align-items: center;
 }
 
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
 
 
 .stepper {
@@ -176,11 +174,6 @@ md-radio-button p {
   counter-reset: stepper;
   margin: 0;
   padding: 0;
-
-  &__step {
-    max-height: 1500px;
-    transition: max-height 0.3s ease-out;
-  }
 
   & > li {
     position: relative;
@@ -212,25 +205,62 @@ md-radio-button p {
     }
   }
 
+  &__step-summary {
+    display: none;
+    list-style-type: none;
+    padding-left: 0;
+  }
+
   &__step.disabled {
     color: rgba(black, 0.38);
-    max-height: 2em;
 
     &:before {
       background: #ddd;
     }
+  }
 
-    *:not(.stepper__step-title) {
-      opacity: 0;
+  &__step.disabled, &__step.loading {
+    & > *:not(.stepper__step-title) {
+      display: none;
     }
   }
 
   &__step.done:before {
-    content: "✓";
+    font-family: 'Material Icons';
+    content: "check";
     background-color: map-get($mat-green, A700);
   }
 
+  &__step.loading:before {
+    content: '';
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 0.6rem solid white;
+    border-top-color: transparent;
+    animation: spinner .6s linear infinite;
+  }
+
+  &__step.loading:after {
+    position: absolute;
+    top: 0;
+    left: -1em;
+
+    box-sizing: border-box;
+    width: 2em;
+    height: 2em;
+
+    content: '';
+    background: transparent;
+
+    border-radius: 50%;
+    border: 0.4rem solid map-get($lito-app-primary, default);
+  }
+
   &__step-title {
+    display: block;
+  }
+
+  &__step.done.disabled .stepper__step-summary {
     display: block;
   }
 }

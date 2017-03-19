@@ -37,7 +37,8 @@ const ticketAmountValidator = (tickets: Ticket[]) => {
 
 @Component({
   selector: 'app-reservations',
-  templateUrl: './reservations.component.html'
+  templateUrl: './reservations.component.html',
+  styleUrls: ['./reservations.component.scss']
 })
 export class ReservationsComponent {
 
@@ -214,6 +215,12 @@ export class ReservationsComponent {
     return r.totalAmount;
   }
 
+  totalPrice() {
+    let r = new Reservation();
+    Object.assign(r, this.form.value);
+    return r.totalPrice;
+  }
+
   validate(ignoreDirty?: boolean) {
     if (!this.form) {
       return;
@@ -249,6 +256,7 @@ export class ReservationsComponent {
 
     this.loading++;
     this.submitting = true;
+
     this.reservationService.put(this.reservation)
       .subscribe((result: any) => {
         this.submitted = true;
