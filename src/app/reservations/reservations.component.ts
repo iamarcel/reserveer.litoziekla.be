@@ -1,6 +1,7 @@
 import { Component, ViewContainerRef } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray,
          AbstractControl, Validators } from '@angular/forms';
+import { MdSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 
@@ -67,7 +68,7 @@ export class ReservationsComponent {
     'Tickets': {
       'ticketAmount': 'Je moet minstens één ticket kiezen.'
     },
-    'Description': {}
+    'Comments': {}
   };
 
 
@@ -76,6 +77,7 @@ export class ReservationsComponent {
               private fb: FormBuilder,
               private tagService: TagService,
               private logSerivce: LogService,
+              private snackBar: MdSnackBar,
               public viewContainerRef: ViewContainerRef) {
 
     this.loading++;
@@ -129,7 +131,7 @@ export class ReservationsComponent {
       'LastName': ['', Validators.required],
       'Email': ['', [Validators.required, emailValidator]],
       'Phone': '',
-      'Description': '',
+      'Comments': '',
       'Tickets': this.fb.array((this.reservation.Tickets || []).map(
         t => this.fb.group({
           'amount': [0],
@@ -282,6 +284,9 @@ export class ReservationsComponent {
             }
           }
         });
+      }, (error: any) => {
+        this.submitting = false;
+        this.snackBar.open('Oepsie! ' + error);
       });
   }
 

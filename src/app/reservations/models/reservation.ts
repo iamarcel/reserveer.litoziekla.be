@@ -6,6 +6,7 @@ export class Reservation {
   public LastName: string;
   public Email: string;
   public Phone: string;
+  public Comments: string;
 
   public CampaignId: string;
   public Tickets: Ticket[];

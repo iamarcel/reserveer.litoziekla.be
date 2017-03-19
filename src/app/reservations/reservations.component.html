@@ -110,7 +110,7 @@
         <ul class="stepper__step-summary mdc-typography--caption" *ngIf="show">
           <li>{{ reservation.FirstName }} {{ reservation.LastName }}</li>
           <li>{{ reservation.Email }}{{ reservation.Phone ? ', ' + reservation.Phone : '' }}</li>
-          <li>{{ reservation.Description }}</li>
+          <li>{{ reservation.Comments }}</li>
         </ul>
 
         <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
@@ -140,7 +140,7 @@
         <md-input-container>
           <textarea mdInput
                     placeholder="Nog opmerkingen?"
-                    formControlName="Description">
+                    formControlName="Comments">
           </textarea>
         </md-input-container>
 
