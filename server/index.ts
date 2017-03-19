@@ -183,7 +183,7 @@ app.post('/api/v1/reservations', (req, res) => {
           error: data.body
         });
       } else {
-        production.subscribe((campaign: any) => {
+        production.take(1).subscribe((campaign: any) => {
           console.log('[LOG] Updating cached available seats');
           let thisCampaign = campaign.ChildCampaigns.records
             .filter((campaign: Campaign) => campaign.Id == reservation.CampaignId)[0];

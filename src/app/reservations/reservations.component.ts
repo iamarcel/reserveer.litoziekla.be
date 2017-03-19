@@ -267,8 +267,6 @@ export class ReservationsComponent {
 
         console.log(result);
 
-        this.reservation = new Reservation();
-
         let opportunity = result as Opportunity;
 
         // Send to GTM
@@ -277,7 +275,7 @@ export class ReservationsComponent {
           'ecommerce': {
             'purchase': {
               'actionField': {
-                'id': opportunity.Id || 'UNKNOWN_OPPORTUNITY',
+                'id': opportunity ? opportunity.Id : 'UNKNOWN_OPPORTUNITY',
                 'revenue': this.reservation.totalPrice
               },
               'products': this._ticketsForGTM(this.reservation.Tickets)
@@ -291,6 +289,9 @@ export class ReservationsComponent {
   }
 
   private _ticketsForGTM(tickets: Ticket[]) {
+    if (!tickets) {
+      return [];
+    }
     return tickets.map(t => ({
       'name': t.ticketType.Name,
       'id': t.ticketType.Id,
