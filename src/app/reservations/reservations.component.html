@@ -20,12 +20,9 @@
      </a>
      </div> -->
 
-
-<div *ngIf="production">
-
-  <div class="hero image"
-       *ngIf="production"
-       [innerHTML]="production.Hero_Image__c"></div>
+<div class="hero image"
+     [class.loading]="!production"
+     [innerHTML]="production ? production.Hero_Image__c : ''"></div>
 
   <form class="content"
         [formGroup]="form"
@@ -33,11 +30,15 @@
         [class.loading]="loading > 0">
 
     <h1 class="mdc-typography--headline" style="margin: 0.5rem 0 0.5rem 3rem">
-      Reserveer je tickets voor {{ production.Name }}
+      Reserveer je tickets
+      <span *ngIf="production">
+        voor {{ production.Name }}
+      </span>
     </h1>
 
     <ol class="stepper">
       <li class="stepper__step"
+          [class.loading]="!production"
           [class.disabled]="submitted"
           [class.done]="show">
         <h2 class="stepper__step-title mdc-typography--title">Voorstelling</h2>
@@ -46,27 +47,29 @@
           <li>{{ show.Entrance__c }}</li>
         </ul>
 
-        <h3 class="mdc-typography--subheading2">Waar?</h3>
-        <p class="mdc-typography--body1">{{ production.Location__c }}</p>
+        <div *ngIf="production">
+          <h3 class="mdc-typography--subheading2">Waar?</h3>
+          <p class="mdc-typography--body1">{{ production.Location__c }}</p>
 
-        <h3 class="mdc-typography--subheading2">Wanneer?</h3>
-        <md-radio-group>
-          <md-radio-button [value]="show.Id"
-                           (click)="setShow(show)"
-                           class="show-radio-button"
-                           [class.disabled]="!show.IsActive"
-                           *ngFor="let show of production.ChildCampaigns.records">
-            <p class="mdc-typography--body2">{{ show.Entrance__c }}</p>
-            <span class="mdc-typography--body1">
-              <span *ngIf="!showIsFull(show)">
-                {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+          <h3 class="mdc-typography--subheading2">Wanneer?</h3>
+          <md-radio-group>
+            <md-radio-button [value]="show.Id"
+                             (click)="setShow(show)"
+                             class="show-radio-button"
+                             [class.disabled]="!show.IsActive"
+                             *ngFor="let show of production.ChildCampaigns.records">
+              <p class="mdc-typography--body2">{{ show.Entrance__c }}</p>
+              <span class="mdc-typography--body1">
+                <span *ngIf="!showIsFull(show)">
+                  {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+                </span>
+                <span *ngIf="showIsFull(show)">
+                  Sorry, volzet!
+                </span>
               </span>
-              <span *ngIf="showIsFull(show)">
-                Sorry, volzet!
-              </span>
-            </span>
-          </md-radio-button>
-        </md-radio-group>
+            </md-radio-button>
+          </md-radio-group>
+        </div>
       </li>
 
 
@@ -172,9 +175,8 @@
     </ol>
 
   </form>
-</div>
 
-<div class="content"
+<div class="content sponsors"
     [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
   <h2 class="mdc-typography--headline">Met dank aan onze sponsors</h2>
   <p class="mdc-typography--body1">Zij maakten deze productie mogelijk!</p>

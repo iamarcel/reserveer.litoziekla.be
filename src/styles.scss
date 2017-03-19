@@ -23,9 +23,9 @@ $lito-app-theme: mat-light-theme($lito-app-primary, $lito-app-accent, $lito-app-
 // that you are using.
 @include angular-material-theme($lito-app-theme);
 
-/* Material Design Lite */
-
-// Variables and mixins
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
 
 body {
     font-family: 'Roboto', 'Source Sans Pro','Helvetica Neue', sans-serif;
@@ -46,6 +46,26 @@ a.icon {
 
 a .ui.icon.button .icon {
   color: inherit !important;
+}
+
+.hero.loading, .sponsors.loading {
+  position: relative;
+  height: 400px;
+  background: rgba(black, 0.06);
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    left: 50%;
+    top: 50%;
+    margin: -1rem 0 0 -1rem;
+    border-radius: 50%;
+    border: 0.2rem solid map-get($lito-app-primary, default);
+    border-top-color: transparent;
+    animation: spinner .6s linear infinite;
+  }
 }
 
 .hero img {
@@ -162,10 +182,6 @@ md-radio-button p {
 
 .mat-radio-label {
   align-items: center;
-}
-
-@keyframes spinner {
-  to {transform: rotate(360deg);}
 }
 
 
