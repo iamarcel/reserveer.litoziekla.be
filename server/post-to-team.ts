@@ -1,5 +1,3 @@
-/// <reference path="../typings/index.d.ts" />
-
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/bindNodeCallback';
 import 'rxjs/add/operator/mergeMap';

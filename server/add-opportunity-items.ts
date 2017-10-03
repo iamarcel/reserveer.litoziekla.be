@@ -1,5 +1,3 @@
-/// <reference path="../typings/index.d.ts" />
-
 import { Connection } from 'jsforce';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';

@@ -1,10 +1,9 @@
-/// <reference path="../typings/index.d.ts" />
-
 import 'core-js';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as JSForce from 'jsforce';
 import * as ApplicationInsights from 'applicationinsights';
+import * as Mollie from 'mollie-api-node';
 const SETTINGS = require('./settings.json');
 
 import { Observable } from 'rxjs/Observable';
@@ -42,6 +41,7 @@ import { Reservation } from '../src/app/reservations/models/reservation';
 // import { addOpportunityItems } from './add-opportunity-items';
 import { getSponsors } from './get-sponsors';
 import { postToTeam } from './post-to-team';
+import * as mollie from './mollie';
 
 
 
@@ -77,7 +77,7 @@ const CAMPAIGN_FIELDS = 'Id,Name,Maximum_Opportunities__c,MaximumProducts__c,Her
     + 'StartDate,EndDate,NumberOfOpportunities,NumberOfProducts__c,'
     + 'Location__c,RecordTypeId,RecordType.Name,RecordType.DeveloperName,'
     + 'DefaultPricebook2__c,Entrance__c,IsActive';
-const productionSubject = new Subject();
+const productionSubject = new Subject<any>();
 const production = productionSubject.publishReplay(1).refCount();
 
 const sponsors = Observable.combineLatest(login, production)
@@ -143,7 +143,7 @@ products.subscribe(result => console.log('[LOG] Products updated.'),
 
 
 // Start up the app
-export const app = express();
+const app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/dist'));
 
@@ -165,6 +165,8 @@ app.get('/api/v1/recordTypes', (req, res) => {
     res.json(mockData['record-types']);
 });
 
+app.get('/api/v1/hook', mollie.checkPayment);
+
 const request = require('request');
 app.post('/api/v1/reservations', (req, res) => {
   let reservation: Reservation = req.body;
@@ -180,7 +182,7 @@ app.post('/api/v1/reservations', (req, res) => {
     .subscribe(data => {
       if (data.response.statusCode != 201) {
         res.status(data.response.statusCode).json({
-          error: data.body
+          error: data.error.message
         });
       } else {
         production.take(1).subscribe((campaign: any) => {
@@ -193,6 +195,14 @@ app.post('/api/v1/reservations', (req, res) => {
         });
 
         console.log('[NICE] All done processing the reservation\n\n');
+
+        // Create the payment
+        mollie.api.payments.create({
+          amount: 999,
+          description: 'My first API payment',
+          redirectUrl: `http://${SETTINGS.root}/`,
+          webhook: `http://${SETTINGS.root}/api/v1/hook`,
+        })
 
         res.status(201).json(data.body);
       }
