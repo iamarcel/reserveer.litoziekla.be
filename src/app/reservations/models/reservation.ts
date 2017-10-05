@@ -14,6 +14,10 @@ export class Reservation {
   constructor() { }
 
   get totalPrice(): number {
+    return this.getTotalPrice();
+  }
+
+  getTotalPrice(): number {
     return (this.Tickets || []).reduce(
       (sum, t) => sum + t.amount * t.ticketType.UnitPrice, 0.0);
   }

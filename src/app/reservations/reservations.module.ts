@@ -5,10 +5,14 @@ import {
   MdSnackBarModule,
   MdRadioModule,
   MdButtonModule,
-  MdInputModule
+  MdInputModule,
+  MdIconModule,
+  MdCardModule,
+  MdListModule,
 } from '@angular/material';
 
 import { ReservationsComponent } from './reservations.component';
+import { OrderStatusComponent } from './order-status.component';
 
 import { CampaignService } from './campaign.service';
 import { ReservationService } from './reservation.service';
@@ -21,13 +25,17 @@ import { TicketLineItemComponent } from './ticket-line-item/ticket-line-item.com
     MdSnackBarModule,
     MdRadioModule,
     MdButtonModule,
-    MdInputModule
+    MdInputModule,
+    MdIconModule,
+    MdCardModule,
+    MdListModule,
   ],
   declarations: [
     ReservationsComponent,
-    TicketLineItemComponent
+    TicketLineItemComponent,
+    OrderStatusComponent,
   ],
-  exports: [ ReservationsComponent ],
+  exports: [ ReservationsComponent, OrderStatusComponent ],
   providers: [
     CampaignService,
     ReservationService

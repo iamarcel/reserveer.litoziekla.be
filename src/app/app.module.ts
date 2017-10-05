@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MdToolbarModule } from '@angular/material';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { ApiService } from './api.service';
@@ -11,12 +12,34 @@ import { LogService } from './log.service';
 import { TagService } from './tag.service';
 
 import { ReservationsModule } from './reservations/reservations.module';
+import { ReservationsComponent } from './reservations/reservations.component';
+import { OrderStatusComponent } from './reservations/order-status.component';
+
+const appRoutes: Routes = [
+  {
+    path: 'order/:id',
+    component: OrderStatusComponent,
+  },
+  {
+    path: 'order',
+    component: ReservationsComponent
+  },
+  {
+    path: '',
+    redirectTo: '/order',
+    pathMatch: 'full',
+  }
+];
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    RouterModule.forRoot(
+      appRoutes,
+      { enableTracing: true }, // DEBUG
+    ),
     BrowserModule,
     FormsModule,
     HttpModule,

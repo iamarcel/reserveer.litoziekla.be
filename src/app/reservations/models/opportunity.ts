@@ -1,16 +1,18 @@
 export class Opportunity {
-    public Id: String;
-    public CampaignId: String;
-    public AccountId: String;
-    public RecordTypeId: String;
-    public Pricebook2Id: String;
-    public Name: String;
-    public CloseDate: Date;
-    public StageName: String;
-    public TotalOpportunityQuantity: Number;
-    public Logo__c?: string;
+  public Id: string;
+  public CampaignId: string;
+  public AccountId: string;
+  public RecordTypeId: string;
+  public Pricebook2Id: string;
+  public Name: string;
+  public CloseDate: Date;
+  public StageName: string;
+  public TotalOpportunityQuantity: Number;
+  public Logo__c?: string;
+  public Amount: number;
+  public PaymentId__c?: string;
 
-    constructor(initializer: any) {
-        Object.assign(this, initializer);
-    }
+  constructor(initializer: any) {
+    Object.assign(this, initializer);
+  }
 }

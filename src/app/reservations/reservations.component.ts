@@ -43,19 +43,19 @@ const ticketAmountValidator = (tickets: Ticket[]) => {
 })
 export class ReservationsComponent {
 
-  private form: FormGroup;
-  private error: string;
+  form: FormGroup;
+  error: string;
 
-  private production: Campaign;
-  private show: Campaign;
-  private reservation: Reservation = new Reservation();
-  private sponsors: Opportunity[];
+  production: Campaign;
+  show: Campaign;
+  reservation: Reservation = new Reservation();
+  sponsors: Opportunity[];
 
-  private loading: number = 0;
-  private submitting: boolean = false;
-  private submitted: boolean = false;
+  loading: number = 0;
+  submitting: boolean = false;
+  submitted: boolean = false;
 
-  private formErrors: string[] = [];
+  formErrors: string[] = [];
 
   private validationMessages = {
     'LastName': {
@@ -266,6 +266,7 @@ export class ReservationsComponent {
         this.loading--;
 
         console.log(result);
+        window.location.href = result.location;
 
         let opportunity = result as Opportunity;
 

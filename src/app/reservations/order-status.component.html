@@ -1,0 +1,39 @@
+<div class="order-status">
+  <md-card class="order-status__card" *ngIf="reservation$ | async as reservation">
+    <md-card-title>Je Reservatie</md-card-title>
+    <md-card-content>
+      <md-nav-list>
+        <div *ngIf="paymentStatus$ | async as status"
+          [class]="'status-' + status.code">
+          <a md-list-item (click)="processPayment(status.code, reservation.opportunity.Id)">
+            <md-icon mdListIcon>{{ status.icon }}</md-icon>
+            <h3 mdLine>Betaling</h3>
+            <p mdLine>{{ status.message }}</p>
+          </a>
+        </div>
+        <md-list-item>
+          <md-icon mdListIcon>account_circle</md-icon>
+          <h3 mdLine>Naam</h3>
+          <p mdLine>{{ reservation.contact.Name }} </p>
+        </md-list-item>
+        <md-list-item>
+            <md-icon mdListIcon>event_note</md-icon>
+            <h3 mdLine>Aantal Tickets</h3>
+            <p mdLine>{{ reservation.opportunity.TotalOpportunityQuantity }}</p>
+        </md-list-item>
+        <md-list-item>
+            <md-icon mdListIcon>event</md-icon>
+            <h3 mdLine>Aanvang</h3>
+            <p mdLine>{{ reservation.campaign.Entrance__c }}</p>
+        </md-list-item>
+        <a md-list-item [href]="directionsUrl(reservation.campaign.Location__c)">
+            <md-icon mdListIcon>directions</md-icon>
+            <h3 mdLine>Locatie</h3>
+            <p mdLine>{{ reservation.campaign.Location__c }}</p>
+        </a>
+      </md-nav-list>
+
+      <small>Je kan deze pagina open laten om altijd de laatste info over je reservatie te hebben.</small>
+    </md-card-content>
+  </md-card>
+</div>

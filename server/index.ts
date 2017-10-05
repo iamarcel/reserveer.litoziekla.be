@@ -1,15 +1,12 @@
 import 'core-js';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import * as JSForce from 'jsforce';
 import * as ApplicationInsights from 'applicationinsights';
 import * as Mollie from 'mollie-api-node';
 const SETTINGS = require('./settings.json');
 
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
 import { AsyncSubject } from 'rxjs/AsyncSubject';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/bindNodeCallback';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/fromPromise';
@@ -28,7 +25,7 @@ import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/take';
-const RxHttpRequest = require('rx-http-request').RxHttpRequest;
+import { RxHR } from '@akanass/rx-http-request';
 
 import { AppData } from '../src/app/app-data';
 import { Account } from '../src/app/reservations/models/account';
@@ -37,11 +34,10 @@ import { Campaign } from '../src/app/reservations/models/campaign';
 import { PricebookEntry } from '../src/app/reservations/models/pricebook-entry';
 import { Reservation } from '../src/app/reservations/models/reservation';
 
-// import { resolveContact } from './resolve-contact';
-// import { addOpportunityItems } from './add-opportunity-items';
-import { getSponsors } from './get-sponsors';
 import { postToTeam } from './post-to-team';
 import * as mollie from './mollie';
+import Salesforce from './salesforce.service';
+import Mail from './mail';
 
 
 
@@ -53,128 +49,149 @@ const PORT = process.env.PORT || 3000;
 
 
 // Set up app insights
-ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e').start();
-
-// Set up a Salesforce connection
-const connection = new JSForce.Connection({
-  loginUrl: SETTINGS['salesforce']['url']
-});
-
-// Log in every hour
-const login =
-  Observable.interval(1000 * 60 * 60).startWith(0)
-  .switchMap(_ => {
-    console.log('[LOG] Logging in to Salesforce...');
-    return Observable.fromPromise(
-      connection.login(SETTINGS['salesforce']['auth']['user'],
-                       SETTINGS['salesforce']['auth']['pass']))
-  }).map(x => connection).publishReplay(1).refCount() as Observable<JSForce.Connection>;
-login.subscribe(result => console.log('[LOG] Logged in to Salesforce.'),
-                err => console.error('[ERROR] while logging in to Salesforce:\n', err));
-
-// Fetch & store information we'll be using
-const CAMPAIGN_FIELDS = 'Id,Name,Maximum_Opportunities__c,MaximumProducts__c,Hero_Image__c,'
-    + 'StartDate,EndDate,NumberOfOpportunities,NumberOfProducts__c,'
-    + 'Location__c,RecordTypeId,RecordType.Name,RecordType.DeveloperName,'
-    + 'DefaultPricebook2__c,Entrance__c,IsActive';
-const productionSubject = new Subject<any>();
-const production = productionSubject.publishReplay(1).refCount();
-
-const sponsors = Observable.combineLatest(login, production)
-    .mergeMap(getSponsors)
-    .publishReplay(1).refCount();
-
-login.subscribe(_ => {
-    console.log('[LOG] Caching current production...');
-    (connection as any).sobject('Campaign')
-        .find({
-            'RecordType.DeveloperName': 'Production'
-        }, CAMPAIGN_FIELDS)
-        .include('ChildCampaigns')
-            .select(CAMPAIGN_FIELDS)
-            .where({
-                'RecordType.DeveloperName': 'Show'
-            })
-            .sort('EndDate')
-        .end()
-        .sort('-StartDate')
-        .limit(1)
-        .execute((err, records: any) => {
-            console.log('[LOG] Received answer about current production.');
-            if (err) {
-                return productionSubject.error(err);
-            }
-
-            let campaign = records[0];
-            let html = campaign.Hero_Image__c;
-            campaign.Hero_Image__c =
-                (html || '').replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
-
-            console.log('[LOG] Parsed current production\n');
-            productionSubject.next(records[0]);
-        });
-});
-production.subscribe(result => console.log('[LOG] Production updated.'),
-                     err => console.error('[ERROR] while caching production:\n', err));
-
-const PRICEBOOKENTRY_FIELDS = 'Id,Name,Pricebook2Id,Product2Id,'
-    + 'UnitPrice,UseStandardPrice,'
-    + 'Product2.Id,Product2.Description,Product2.Name';
-const productsObservable = production
-    .switchMap((campaign: Campaign) => {
-        console.log('[LOG] Caching products...');
-        return Observable.create((observer: Observer<PricebookEntry[]>) => {
-            (connection as any).sobject('PricebookEntry')
-                .find({
-                    'Pricebook2Id': campaign.DefaultPricebook2__c
-                }, PRICEBOOKENTRY_FIELDS)
-                .execute((err, result) => {
-                    if (err) return observer.error(err);
-                    observer.next(result);
-                    observer.complete();
-                });
-        });
-    });
-const products = productsObservable.publishReplay(1).refCount();
-products.subscribe(result => console.log('[LOG] Products updated.'),
-                   err => console.error('[ERROR] while caching products:\n', err));
-
-
-
+ApplicationInsights.setup('4a53ccb5-c5c0-4921-a764-de3bf06f910e');
+ApplicationInsights.start();
 
 // Start up the app
 const app = express();
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/dist'));
 
 let appData = new AppData();
 const mockData = appData.createDb();
 app.get('/api/v1/current/productions', (req, res) => {
-  production.take(1).subscribe((result) => res.json(result));
+  salesforce.production$.take(1).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/tickets', (req, res) => {
-  products.take(1).subscribe((result) => res.json(result));
+  salesforce.pricebookEntries$.take(1).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/sponsors', (req, res) => {
-  sponsors.take(1).subscribe(sponsors => res.json(sponsors));
+  salesforce.sponsors$.take(1).subscribe(sponsors => res.json(sponsors));
 });
 
 app.get('/api/v1/recordTypes', (req, res) => {
     res.json(mockData['record-types']);
 });
 
-app.get('/api/v1/hook', mollie.checkPayment);
+app.post('/api/v1/payments/check', mollie.checkPayment);
+
+const salesforce = Salesforce.setup();
+const mail = Mail.setup(SETTINGS.mailchimp.api_key, SETTINGS.mailchimp.store_id);
+
+// Update products on MailChimp
+salesforce.pricebookEntries$.subscribe(
+  entries => entries.forEach(entry => mail.upsertProduct(entry).subscribe(() => console.log('[LOG] Updated product in Mailchimp'))));
 
 const request = require('request');
+
+app.get('/api/v1/reservation/:id', (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ message: 'Missing param: id' });
+  }
+
+
+  Observable.combineLatest(
+    salesforce.getOpportunity(id),
+    salesforce.getOpportunityContact(id),
+  ).subscribe(results => {
+    const [opportunity, contact] = results;
+    salesforce.getCampaign(opportunity.CampaignId)
+      .subscribe(campaign => {
+        res.json({
+          opportunity,
+          contact,
+          campaign,
+        });
+      });
+  });
+});
+
+app.get('/api/v1/reservation/:id/contact', (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ message: 'Missing param: id' });
+  }
+
+  salesforce.getOpportunityContact(id).subscribe(c => res.json(c));
+});
+
+app.get('/api/v1/reservation/:id/campaign', (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ message: 'Missing param: id' });
+  }
+
+  salesforce
+    .getOpportunity(id)
+    .switchMap(
+      opportunity => salesforce.getCampaign(opportunity.CampaignId))
+    .subscribe(c => res.json(c));
+});
+
+const redirectToPayment = (res, payment) => {
+  res.writeHead(302, { Location: payment.getPaymentUrl() })
+  return res.end();
+};
+
+const createPayment = (res, opportunity) =>
+  mollie.api.payments.create({
+    amount: opportunity.Amount,
+    description: opportunity.Name,
+    redirectUrl: `${SETTINGS.root}/order/${opportunity.Id}`,
+    webhookUrl: `${SETTINGS.root}/api/v1/payments/check`,
+    metadata: {
+      OpportunityId: opportunity.Id,
+    },
+  }, payment => {
+    salesforce.patchOpportunity({
+      ...opportunity,
+      PaymentId__c: payment.id,
+    });
+    redirectToPayment(res, payment);
+  });
+
+const upsertPayment = (res, opportunity) =>
+  // Fetch the payment
+  mollie.api.payments.get(opportunity.PaymentId__c, (payment) => {
+    if (payment.error || payment.status !== 'open') {
+      createPayment(res, opportunity);
+    } else {
+      redirectToPayment(res, payment);
+    }
+  });
+
+
+
+app.get('/api/v1/reservation/:id/pay', (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ message: 'Missing param: id' });
+  }
+
+  salesforce.getOpportunity(id)
+    .subscribe(opportunity => {
+      if (opportunity.PaymentId__c) {
+        upsertPayment(res, opportunity);
+      } else {
+        createPayment(res, opportunity);
+      }
+    });
+});
+
 app.post('/api/v1/reservations', (req, res) => {
-  let reservation: Reservation = req.body;
+  let reservation = new Reservation();
+  Object.assign(reservation, req.body);
 
   // postToTeam(SETTINGS, reservation, production)
   //   .subscribe(x => console.log('[LOG] Sent out that there\'s a new reservation to the team!'));
 
-  RxHttpRequest.post(SETTINGS.salesforce.endpoints.reservation, {
+  RxHR.post(SETTINGS.salesforce.endpoints.reservation, {
     method: 'POST',
     json: true,
     body: reservation
@@ -182,29 +199,78 @@ app.post('/api/v1/reservations', (req, res) => {
     .subscribe(data => {
       if (data.response.statusCode != 201) {
         res.status(data.response.statusCode).json({
-          error: data.error.message
+          error: data.body ? JSON.stringify(data.body) : 'Unknown error.',
         });
       } else {
-        production.take(1).subscribe((campaign: any) => {
+        salesforce.production$.take(1).subscribe((campaign: any) => {
           console.log('[LOG] Updating cached available seats');
           let thisCampaign = campaign.ChildCampaigns.records
             .filter((campaign: Campaign) => campaign.Id == reservation.CampaignId)[0];
           thisCampaign.NumberOfProducts__c += reservation.Tickets.reduce(
             (acc, t) => acc + t.amount, 0);
-          productionSubject.next(campaign);
+          salesforce.setProduction(campaign);
         });
 
         console.log('[NICE] All done processing the reservation\n\n');
+        console.log(JSON.parse(data.body));
+
+        const opportunity = JSON.parse(data.body);
+
+        const orderUrl = `${SETTINGS.root}/order/${opportunity.Id}`;
+
+        // Add to Mailchimp
+        Observable.combineLatest(
+          salesforce.getOpportunityContact(opportunity.Id),
+          salesforce.getOpportunityLineItems(opportunity.Id),
+          salesforce.pricebookEntries$,
+        ).flatMap(
+          ([contact, lines, entries]) => mail.insertReservation(
+            reservation,
+            opportunity,
+            contact,
+            lines,
+            entries,
+            orderUrl
+          ))
+          .subscribe(data => console.dir(data), err => console.error(err));
 
         // Create the payment
-        mollie.api.payments.create({
-          amount: 999,
-          description: 'My first API payment',
-          redirectUrl: `http://${SETTINGS.root}/`,
-          webhook: `http://${SETTINGS.root}/api/v1/hook`,
-        })
+        if (reservation.getTotalPrice() > 0) {
+          mollie.api.payments.create({
+            amount: reservation.getTotalPrice(),
+            description: opportunity.Name,
+            redirectUrl: `${SETTINGS.root}/order/${opportunity.Id}`,
+            webhookUrl: `${SETTINGS.root}/api/v1/payments/check`,
+            metadata: {
+              OpportunityId: opportunity.Id,
+            },
+          }, (payment) => {
+            if (payment.error) {
+              console.error(payment.error);
+              throw new Error(payment.error);
+            }
 
-        res.status(201).json(data.body);
+            salesforce.patchOpportunity({
+              ...opportunity,
+              PaymentId__c: payment.id,
+            }).subscribe();
+
+            res.status(201).json({
+              data: {
+                location: payment.getPaymentUrl(),
+              }
+            });
+          });
+        } else {
+          salesforce.patchOpportunity({
+            Id: opportunity.Id,
+            StageName: 'Closed Won'
+          }).subscribe(() => res.status(201).json({
+            data: {
+              location: `${SETTINGS.root}/order/${opportunity.Id}`
+            }
+          }));
+        }
       }
     });
 });

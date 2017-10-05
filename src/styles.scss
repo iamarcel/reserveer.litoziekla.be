@@ -109,6 +109,11 @@ md-toolbar .logo {
   margin-right: 0.5em;
 }
 
+md-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
 .item.disabled {
   opacity: .5;
 }
