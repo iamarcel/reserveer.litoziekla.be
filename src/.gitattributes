@@ -1,2 +1,1 @@
-*.js -diff
-*.js merge=ours
+* merge=ours

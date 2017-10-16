@@ -1,0 +1,323 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the base styles for Angular Material core. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$lito-app-primary: mat-palette($mat-blue);
+$lito-app-accent:  mat-palette($mat-amber, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$lito-app-warn:    mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$lito-app-theme: mat-light-theme($lito-app-primary, $lito-app-accent, $lito-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($lito-app-theme);
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+body {
+    font-family: 'Roboto', 'Source Sans Pro','Helvetica Neue', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+a.icon {
+    text-decoration: none;
+    color: #000;
+}
+
+.inline-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 1em;
+}
+
+a .ui.icon.button .icon {
+  color: inherit !important;
+}
+
+.hero.loading, .sponsors.loading {
+  position: relative;
+  height: 400px;
+  background: rgba(black, 0.06);
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    left: 50%;
+    top: 50%;
+    margin: -1rem 0 0 -1rem;
+    border-radius: 50%;
+    border: 0.2rem solid map-get($lito-app-primary, default);
+    border-top-color: transparent;
+    animation: spinner .6s linear infinite;
+  }
+}
+
+.hero img {
+    display: block;
+    width: 100%;
+}
+
+form mat-input {
+    width: 100%;
+}
+
+main {
+    background: #fff;
+    margin: 0;
+}
+
+.content {
+  background: #fff;
+  padding: 10px;
+  max-width: 600px;
+  margin: auto;
+}
+
+mat-card {
+    margin-bottom: 1em;
+}
+
+.sponsor img {
+    display: block;
+    width: 100%;
+}
+
+.ui.menu {
+  border-radius: 0;
+  margin: 0;
+}
+
+mat-toolbar .logo {
+  height: 1em;
+  width: auto;
+  margin-right: 0.5em;
+}
+
+mat-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.item.disabled {
+  opacity: .5;
+}
+
+.fb-messenger-button {
+  color: white !important;
+  background: #007FFF;
+}
+
+.icon > svg {
+  width: 1em;
+  height: 100%;
+}
+
+.mat-toolbar {
+  background: #222;
+  color: white;
+}
+
+.steps {
+  list-style-type: none;
+  display: flex;
+  flex-direction: horizontal;
+  justify-content: space-around;
+  padding: 0;
+
+  &__step {
+    display: block;
+  }
+
+  &__step-title {
+    display: none;
+    text-align: center;
+    margin-top: 0;
+  }
+
+  &__step-number {
+    display: block;
+    text-align: center;
+    color: rgba(0,0,0,.4);
+  }
+
+  &__step--selected {
+    .steps__step-number, .steps__step-title {
+      display:block;
+    }
+
+    .steps__step-number {
+      color: rgba(0,0,0,.7);
+    }
+  }
+}
+
+button[type=submit] {
+  display: block;
+  width: 100%;
+}
+
+.show-radio-button {
+  width: 100%;
+  margin: 5px;
+
+  label {
+    width: 100%;
+  }
+}
+
+mat-radio-button p {
+  margin: 0;
+}
+
+.mat-radio-label {
+  align-items: center;
+}
+
+
+.stepper {
+  // Reset
+  counter-reset: stepper;
+  margin: 0;
+  padding: 0;
+
+  & > li {
+    position: relative;
+
+    margin: 0 0 0 1em;
+    line-height: 2em;
+    padding: 0 10px;
+    padding-left: 2em;
+    padding-bottom: 3em;
+
+    border-left: 1px solid rgba(black, .12);
+
+    &:before {
+      content: counter(stepper);
+      counter-increment: stepper;
+
+      position: absolute;
+      top: 0;
+      left: -1em;
+      width: 2em;
+      height: 2em;
+      text-align: center;
+      border-radius: 50%;
+      background: map-get($lito-app-primary, default);
+
+      color: #fff;
+
+      box-shadow: 0 0 0 0.5rem #fff;
+    }
+  }
+
+  &__step-summary {
+    display: none;
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  &__step.disabled {
+    color: rgba(black, 0.38);
+
+    &:before {
+      background: #ddd;
+    }
+  }
+
+  &__step.disabled, &__step.loading {
+    & > *:not(.stepper__step-title) {
+      display: none;
+    }
+  }
+
+  &__step.done:before {
+    font-family: 'Material Icons';
+    content: "check";
+    background-color: map-get($mat-green, A700);
+  }
+
+  &__step.loading:before {
+    content: '';
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 0.6rem solid white;
+    border-top-color: transparent;
+    animation: spinner .6s linear infinite;
+  }
+
+  &__step.loading:after {
+    position: absolute;
+    top: 0;
+    left: -1em;
+
+    box-sizing: border-box;
+    width: 2em;
+    height: 2em;
+
+    content: '';
+    background: transparent;
+
+    border-radius: 50%;
+    border: 0.4rem solid map-get($lito-app-primary, default);
+  }
+
+  &__step-title {
+    display: block;
+  }
+
+  &__step.done.disabled .stepper__step-summary {
+    display: block;
+  }
+}
+
+.form-errors {
+  background: map-get($lito-app-warn, 50);
+  border: 1px solid map-get($lito-app-warn, 200);
+  color: map-get($lito-app-warn, 900);
+  padding: 0.5em;
+  margin: 1em 0;
+  font-size: 12px;
+  line-height: 16px;
+
+  ul {
+    padding-left: 1em;
+
+    & > li {
+      margin: 0.5em;
+    }
+  }
+}
+
+.sponsor-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+
+  & > * {
+    width: 30%;
+    padding: 1%;
+  }
+}
+
+mat-vertical-stepper [mat-raised-button] {
+  width: 100%;
+  margin-top: 1em;
+}

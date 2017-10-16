@@ -4,7 +4,7 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": ".",
+    "rootDir": "..",
     "outDir": "build",
     "skipLibCheck": true,
     "sourceMap": false,

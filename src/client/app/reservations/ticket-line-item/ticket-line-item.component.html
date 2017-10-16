@@ -1,0 +1,26 @@
+<div [formGroup]="form" class="ticket-line-item">
+  <div>
+    <span class="mdc-typography--body2">
+      {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
+    </span>
+    <p class="mdc-typography--body1"
+       style="margin-top: 0;">
+      {{ ticket.ticketType.Product2.Description }}
+    </p>
+  </div>
+
+  <div class="number-input">
+    <a mat-icon-button class="number-input__button" (click)="removeTicket()">
+      <mat-icon>remove_circle_outline</mat-icon>
+    </a>
+    <mat-input-container>
+      <input matInput
+             [placeholder]="ticket.ticketType.Name + 's'"
+             formControlName="amount">
+    </mat-input-container>
+    <a mat-icon-button class="number-input__button" (click)="addTicket()">
+      <mat-icon>add_circle_outline</mat-icon>
+    </a>
+  </div>
+
+</div>

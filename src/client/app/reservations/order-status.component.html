@@ -1,0 +1,39 @@
+<div class="order-status">
+  <mat-card class="order-status__card" *ngIf="reservation$ | async as reservation">
+    <mat-card-title>Je Reservatie</mat-card-title>
+    <mat-card-content>
+      <mat-nav-list>
+        <div *ngIf="paymentStatus$ | async as status"
+          [class]="'status-' + status.code">
+          <a mat-list-item (click)="processPayment(status.code, reservation.opportunity.Id)">
+            <mat-icon matListIcon>{{ status.icon }}</mat-icon>
+            <h3 matLine>Betaling</h3>
+            <p matLine>{{ status.message }}</p>
+          </a>
+        </div>
+        <mat-list-item>
+          <mat-icon matListIcon>account_circle</mat-icon>
+          <h3 matLine>Naam</h3>
+          <p matLine>{{ reservation.contact.Name }} </p>
+        </mat-list-item>
+        <mat-list-item>
+            <mat-icon matListIcon>event_note</mat-icon>
+            <h3 matLine>Aantal Tickets</h3>
+            <p matLine>{{ reservation.opportunity.TotalOpportunityQuantity }}</p>
+        </mat-list-item>
+        <mat-list-item>
+            <mat-icon matListIcon>event</mat-icon>
+            <h3 matLine>Aanvang</h3>
+            <p matLine>{{ reservation.campaign.Entrance__c }}</p>
+        </mat-list-item>
+        <a mat-list-item [href]="directionsUrl(reservation.campaign.Location__c)">
+            <mat-icon matListIcon>directions</mat-icon>
+            <h3 matLine>Locatie</h3>
+            <p matLine>{{ reservation.campaign.Location__c }}</p>
+        </a>
+      </mat-nav-list>
+
+      <small>Je kan deze pagina open laten om altijd de laatste info over je reservatie te hebben.</small>
+    </mat-card-content>
+  </mat-card>
+</div>
