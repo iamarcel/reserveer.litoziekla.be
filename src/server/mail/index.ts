@@ -8,6 +8,7 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import { RxHR } from '@akanass/rx-http-request';
+import * as md5 from 'blueimp-md5';
 
 import { Contact } from '../../models/contact';
 import { Opportunity } from '../../models/opportunity';
@@ -113,18 +114,18 @@ export default class Mail {
     return Observable.zip(
       Observable.of(true)
         .filter(() => reservation.OptIn === true)
-        .switchMap(() =>
-                  this.request.post(
-                    `${this.listPath}/members`, {
-                      body: {
-                        email_address: contact.Email,
-                        status: 'pending',
-                        merge_fields: {
-                          FNAME: contact.FirstName,
-                          LNAME: contact.LastName
-                        }
-                      }
-                    })),
+        .switchMap(
+          () => this.request.put(
+            `${this.listPath}/members/${md5(contact.Email.toLowerCase())}`, {
+              body: {
+                email_address: contact.Email,
+                status: 'pending',
+                merge_fields: {
+                  FNAME: contact.FirstName,
+                  LNAME: contact.LastName
+                }
+              }
+            })),
       this.request.post(
         `${this.storePath}/orders`, {
           body: {
