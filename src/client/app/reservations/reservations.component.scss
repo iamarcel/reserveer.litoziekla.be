@@ -6,3 +6,38 @@ mat-checkbox {
   display: block;
   width: 100%;
 }
+
+.stepper-indent {
+  margin: 0.5rem 0 0.5rem 60px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 2rem;
+  background: #222;
+
+  color: #999;
+  line-height: 0.75rem;
+  font-size: 0.75rem;
+
+  .methods {
+    display: flex;
+    justify-content: center;
+
+    .method {
+      text-align: center;
+      padding: 0 12px;
+
+      p {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}

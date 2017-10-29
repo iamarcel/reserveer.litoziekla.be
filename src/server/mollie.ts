@@ -54,3 +54,14 @@ export const checkPayment = (req, res) => {
     }
   });
 };
+
+export const getMethods = (req, res) => {
+  api.methods.all((methods) => {
+    if (methods.error) {
+      console.error(methods.error);
+      return res.status(500).json(methods);
+    }
+
+    res.status(200).json(methods);
+  });
+}

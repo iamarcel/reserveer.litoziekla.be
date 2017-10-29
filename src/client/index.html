@@ -98,25 +98,25 @@ Kinderachtig, kinds, kinderlijk? Verouderd, verantwoordelijk, voltooid? Maak uw 
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
-    <!-- Facebook SDK -->
     <script>
       window.fbAsyncInit = function() {
         FB.init({
-          appId: "573581272802189",
-          xfbml: true,
-          version: "v2.6"
+          appId            : '123570874987445',
+          autoLogAppEvents : true,
+          xfbml            : true,
+          version          : 'v2.10'
         });
-
+        FB.AppEvents.logPageView();
       };
+
       (function(d, s, id){
         var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) { return; }
+        if (d.getElementById(id)) {return;}
         js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
     </script>
-    <!-- End Facebook SDK -->
 
     <style type="text/css">
       @keyframes spinner {

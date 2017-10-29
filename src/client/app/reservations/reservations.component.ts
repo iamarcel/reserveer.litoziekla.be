@@ -11,7 +11,7 @@ import { Product2 } from '../../../models/product2';
 import { Reservation, Ticket } from '../../../models/reservation';
 
 import { CampaignService } from './campaign.service';
-import { ReservationService } from './reservation.service';
+import { ReservationService, Method } from './reservation.service';
 import { LogService } from '../log.service';
 import { TagService } from '../tag.service';
 
@@ -45,6 +45,7 @@ export class ReservationsComponent {
 
   form: FormGroup;
   error: string;
+  methods$: Observable<Method[]>;
 
   production: Campaign;
   show: Campaign;
@@ -98,6 +99,8 @@ export class ReservationsComponent {
               private logSerivce: LogService,
               private snackBar: MatSnackBar,
               public viewContainerRef: ViewContainerRef) {
+
+    this.methods$ = reservationService.methods();
 
     this.loading++;
     campaignService.getCurrentProduction()

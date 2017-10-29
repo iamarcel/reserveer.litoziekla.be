@@ -11,6 +11,7 @@ import {
   MatListModule,
   MatStepperModule,
   MatCheckboxModule,
+  MatToolbarModule,
 } from '@angular/material';
 
 import { ReservationsComponent } from './reservations.component';
@@ -33,6 +34,7 @@ import { TicketLineItemComponent } from './ticket-line-item/ticket-line-item.com
     MatListModule,
     MatStepperModule,
     MatCheckboxModule,
+    MatToolbarModule,
   ],
   declarations: [
     ReservationsComponent,

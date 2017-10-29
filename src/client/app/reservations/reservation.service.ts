@@ -10,11 +10,26 @@ import { Opportunity } from '../../../models/opportunity';
 import { Contact } from '../../../models/contact';
 import { Campaign } from '../../../models/campaign';
 
+export interface Method {
+  resource: 'method';
+  id: string;
+  description: string;
+  amount: {
+    minimum: number;
+    maximum: number;
+  }
+  image: {
+    normal: string; // 55x37
+    bigger: string; // 110x74
+  }
+}
+
 @Injectable()
 export class ReservationService {
 
   private submitReservationUrl = 'api/v1/reservations';
   private getReservationUrl = 'api/v1/reservation';
+  private getMethodsUrl = 'api/v1/methods';
 
   constructor(private http: Http,
               private logService: LogService) { }
@@ -37,6 +52,13 @@ export class ReservationService {
 
   pay(id: string): void {
     window.location.href = `${this.getReservationUrl}/${id}/pay`;
+  }
+
+  methods(): Observable<Method[]> {
+    return this.http
+      .get(`${this.getMethodsUrl}`)
+      .map(response => Array.from(response.json()));
+    // TODO Error handling - this is not an array if there's an error
   }
 
 }

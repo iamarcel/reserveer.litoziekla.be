@@ -182,6 +182,8 @@ app.get('/api/v1/reservation/:id/pay', (req, res) => {
     });
 });
 
+app.get('/api/v1/methods', mollie.getMethods);
+
 app.post('/api/v1/reservations', (req, res) => {
   let reservation = new Reservation();
   Object.assign(reservation, req.body);

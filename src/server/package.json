@@ -10,7 +10,7 @@
     "@types/jsforce": "^1.8.4",
     "@types/node": "^8.0.31",
     "@types/rx-node": "0.0.4",
-    "applicationinsights": "^0.16.0",
+    "applicationinsights": "^1.0.0",
     "blueimp-md5": "^2.10.0",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",

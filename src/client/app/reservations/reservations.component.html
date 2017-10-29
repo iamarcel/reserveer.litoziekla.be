@@ -29,12 +29,31 @@
         (ngSubmit)="submit(form)"
         [class.loading]="loading > 0">
 
-    <h1 class="mdc-typography--headline" style="margin: 0.5rem 0 0.5rem 60px">
+    <h1 class="mdc-typography--headline stepper-indent">
       Reserveer je tickets
       <span *ngIf="production">
         voor {{ production.Name }}
       </span>
     </h1>
+
+    <p class="mdc-typography--body1 stepper-indent">
+      Je tickets zijn gereserveerd op het moment dat we de betaling ontvangen
+      hebben.
+    </p>
+
+    <p class="mdc-typography--body1 stepper-indent">
+      Nog vragen? Problemen bij het reserveren? Contacteer ons:
+    </p>
+    <p class="mdc-typography--body1 stepper-indent text-center">
+      <a mat-button href="https://m.me/litoziekla" target="_blank" color="primary">MESSENGER</a>
+      <a mat-button href="mailto:info@litoziekla.be">EMAIL</a>
+    </p>
+
+      <div class="fb-messengermessageus"
+        app_id="123570874987445"
+        page_id="377509402358387"
+        color="blue"
+        size="standard"></div>
 
     <mat-vertical-stepper formGroupName="stepper" linear>
       <mat-step formGroupName="show" [stepControl]="stepShow">
@@ -157,4 +176,23 @@
 <div class="ui negative message"
      *ngIf="error">
   {{ error }}
+</div>
+
+<div *ngIf="methods$ | async as methods" class="footer">
+  <div class="company-info">
+    Jeugdtheater Litoziekla* vzw<br>
+    BE 0470.282.229<br>
+    Deinzestraat 42<br>
+    9700 Oudenaarde
+  </div>
+  <div class="methods">
+    <div *ngFor="let method of methods" class="method">
+      <p><img
+           [src]="method.image.bigger"
+           width="40"
+           height="40"
+           [alt]="method.description" /></p>
+      <p class="method-name">{{ method.description }}</p>
+    </div>
+  </div>
 </div>
