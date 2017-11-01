@@ -205,11 +205,11 @@ app.post('/api/v1/reservations', (req, res) => {
           error: data.body ? JSON.stringify(data.body) : 'Unknown error.',
         });
       } else {
-        salesforce.production$.take(1).subscribe((campaign: any) => {
+        salesforce.production$.take(1).subscribe(campaign => {
           console.log('[LOG] Updating cached available seats');
-          let thisCampaign = campaign.ChildCampaigns.records
+          let thisCampaign = campaign.ChildCampaigns
             .filter((campaign: Campaign) => campaign.Id == reservation.CampaignId)[0];
-          thisCampaign.NumberOfProducts__c += reservation.Tickets.reduce(
+          thisCampaign.TotalQuantity += reservation.Tickets.reduce(
             (acc, t) => acc + t.amount, 0);
           salesforce.setProduction(campaign);
         });

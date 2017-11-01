@@ -13,6 +13,7 @@
     "applicationinsights": "^1.0.0",
     "blueimp-md5": "^2.10.0",
     "body-parser": "^1.15.2",
+    "core-js": "^2.5.1",
     "express": "^4.14.0",
     "jsforce": "^1.7.1",
     "mailchimp-api-v3": "^1.7.1",
@@ -23,6 +24,7 @@
     "zone.js": "^0.8.18"
   },
   "devDependencies": {
+    "@types/core-js": "^0.9.43",
     "dotenv": "^4.0.0"
   }
 }

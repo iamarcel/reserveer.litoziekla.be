@@ -1,3 +1,5 @@
+import 'core-js';
+
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
@@ -24,9 +26,14 @@ import { Contact } from '../models/contact';
 
 import SETTINGS from './settings';
 
+type CampaignQuantityCount = {
+  CampaignId: string,
+  TotalQuantity: number
+};
+
 // Fetch & store information we'll be using
 const CAMPAIGN_FIELDS = 'Id,Name,Maximum_Opportunities__c,MaximumProducts__c,Hero_Image__c,'
-  + 'StartDate,EndDate,NumberOfOpportunities,NumberOfProducts__c,'
+  + 'StartDate,EndDate,NumberOfOpportunities,'
   + 'Location__c,RecordTypeId,RecordType.Name,RecordType.DeveloperName,'
   + 'DefaultPricebook2__c,Entrance__c,IsActive';
 
@@ -75,6 +82,7 @@ export default class SalesforceService {
     this.production$ = this
       ._production$
       .asObservable()
+      .switchMap(this.addTotalQuantity.bind(this))
       .publishReplay(1).refCount();
     this.production$.subscribe(
       result => console.log('[LOG] Production updated.'),
@@ -105,18 +113,18 @@ export default class SalesforceService {
         .then(x => connection));
   }
 
-  request <T>(query: any) {
+  request <T>(query: any): Observable<T> {
     return Observable.create(
       (observer: Observer<T>) =>
         query.execute({}, (err, result) => {
           if (err) {
             return observer.error(err);
           }
-          if (result.length < 1) {
-            return observer.error('Campaign not found.');
+          if (result.totalSize < 1) {
+            return observer.error('No results found');
           }
 
-          observer.next(result);
+          observer.next(result.records);
           observer.complete();
         }));
   }
@@ -146,7 +154,10 @@ export default class SalesforceService {
           let campaign = records[0];
           let html = campaign.Hero_Image__c;
           campaign.Hero_Image__c =
-            (html || '').replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
+            (html || '').replace(/--c\..+\.content\.force\.com/, '.secure.force.com/test');
+
+          // JSForce stores child relationships one level deeper in `records`
+          campaign.ChildCampaigns = (campaign.ChildCampaigns as any).records;
 
           console.log('[LOG] Parsed current production');
           subject.next(records[0]);
@@ -332,6 +343,26 @@ export default class SalesforceService {
           observer.complete();
         });
     })
+  }
+
+  countTotalQuantity () {
+    return this.request<CampaignQuantityCount[]>(
+      this.connection.query('SELECT CampaignId, SUM(TotalOpportunityQuantity) TotalQuantity ' +
+                            'FROM Opportunity WHERE IsWon = true ' +
+                            'GROUP BY CampaignId')
+    );
+  }
+
+  addTotalQuantity (campaign: Campaign) {
+    return this.countTotalQuantity()
+      .map(quantities => {
+        campaign.ChildCampaigns = campaign.ChildCampaigns.map(childCampaign => {
+          console.log(quantities);
+          childCampaign.TotalQuantity = quantities.find(q => q.CampaignId === childCampaign.Id).TotalQuantity;
+          return childCampaign;
+        });
+        return campaign;
+      });
   }
 
 }

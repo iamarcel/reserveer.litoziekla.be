@@ -69,11 +69,11 @@
               (click)="setShow(show)"
               class="show-radio-button"
               [class.disabled]="!show.IsActive"
-              *ngFor="let show of production.ChildCampaigns.records">
+              *ngFor="let show of production.ChildCampaigns">
               <p class="mat-body-2" style="margin: 0;">{{ show.Entrance__c }}</p>
               <span class="mat-body-1">
                 <span *ngIf="!showIsFull(show)">
-                  {{ show.MaximumProducts__c - show.NumberOfProducts__c }} vrije plaatsen
+                  {{ show.MaximumProducts__c - show.TotalQuantity }} vrije plaatsen
                 </span>
                 <span *ngIf="showIsFull(show)">
                   Sorry, volzet!

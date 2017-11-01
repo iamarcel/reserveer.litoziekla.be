@@ -181,7 +181,7 @@ export class ReservationsComponent {
   }
 
   showIsFull(show: Campaign) {
-    return show.NumberOfProducts__c >= show.MaximumProducts__c;
+    return show.TotalQuantity >= show.MaximumProducts__c;
   }
 
   setShow(show: Campaign) {

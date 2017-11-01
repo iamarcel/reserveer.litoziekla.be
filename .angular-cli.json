@@ -22,7 +22,7 @@
           "output": "./models/"
         },
         {
-          "glob": "{package.json,.gitattributes,tsconfig.json}",
+          "glob": "{package.json,.gitattributes,tsconfig.json,package-lock.json}",
           "input": "../",
           "output": "./"
         }
