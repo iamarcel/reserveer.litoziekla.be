@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
 import { ApiService } from '../api.service';
+import { LoadingService } from '../loading.service';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
@@ -26,7 +27,8 @@ export class CampaignService {
   private _sponsors: Observable<Opportunity[]> = null;
 
   constructor(private http: Http,
-              private apiService: ApiService) {
+              private apiService: ApiService,
+              private loader: LoadingService) {
     this.currentProductionUrl = apiService.baseUrl + 'current/productions';
     this.ticketsUrl = apiService.baseUrl + 'current/productions/tickets';
     this.sponsorsUrl = apiService.baseUrl + 'current/productions/sponsors';
@@ -38,6 +40,7 @@ export class CampaignService {
         .map(response => response.json() as Campaign)
         .last().publishReplay(1).refCount();
     }
+    this.loader.register(this._production, 'Getting production');
     return this._production;
     // TODO: Catch errors
   }
@@ -48,6 +51,7 @@ export class CampaignService {
         .map(response => response.json() as Product2[])
         .last().publishReplay(1).refCount();
     }
+    this.loader.register(this._production, 'Getting ticket types');
     return this._ticketTypes;
     // TODO: Catch errors
   }
@@ -58,6 +62,8 @@ export class CampaignService {
         .map(response => response.json() as Opportunity[])
         .last().publishReplay(1).refCount();
     }
+
+    this.loader.register(this._production, 'Getting sponsors');
     return this._sponsors;
   }
 }

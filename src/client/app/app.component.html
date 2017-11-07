@@ -4,6 +4,7 @@
     Reservaties
   </a>
 </mat-toolbar>
+<mat-progress-bar mode="determinate" [value]="barValue$ | async"></mat-progress-bar>
 
 <main>
   <router-outlet></router-outlet>

@@ -52,9 +52,9 @@ export class ReservationsComponent {
   reservation: Reservation = new Reservation();
   sponsors: Opportunity[];
 
-  loading: number = 0;
-  submitting: boolean = false;
-  submitted: boolean = false;
+  loading = 0;
+  submitting = false;
+  submitted = false;
 
   formErrors: string[] = [];
 
@@ -299,7 +299,6 @@ export class ReservationsComponent {
     this.reservationService.put(this.reservation)
       .subscribe((result: any) => {
         this.submitted = true;
-        this.submitting = false;
         this.loading--;
 
         console.log(result);

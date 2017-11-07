@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { LogService } from '../log.service';
+import { LoadingService } from '../loading.service';
 
 import { Reservation } from '../../../models/reservation';
 import { Opportunity } from '../../../models/opportunity';
@@ -32,12 +33,16 @@ export class ReservationService {
   private getMethodsUrl = 'api/v1/methods';
 
   constructor(private http: Http,
-              private logService: LogService) { }
+              private logService: LogService,
+              private loader: LoadingService) { }
 
   put(reservation: Reservation): Observable<any> {
-    return this.http
+    const req$ = this.http
       .post(this.submitReservationUrl, reservation)
       .map(response => response.json().data);
+
+    this.loader.register(req$, 'Saving Reservation');
+    return req$;
   }
 
   get(id: string): Observable<{
@@ -45,9 +50,11 @@ export class ReservationService {
     campaign: Campaign,
     contact: Contact,
   }> {
-    return this.http
+    const req$ = this.http
       .get(`${this.getReservationUrl}/${id}`)
       .map(response => response.json());
+    this.loader.register(req$, 'Getting Reservation');
+    return req$;
   }
 
   pay(id: string): void {
@@ -55,10 +62,13 @@ export class ReservationService {
   }
 
   methods(): Observable<Method[]> {
-    return this.http
+    const req$ = this.http
       .get(`${this.getMethodsUrl}`)
       .map(response => Array.from(response.json()));
     // TODO Error handling - this is not an array if there's an error
+
+    this.loader.register(req$, 'Getting payment methods');
+    return req$;
   }
 
 }

@@ -156,7 +156,7 @@
         <button mat-raised-button color="primary"
                 type="submit"
                 (click)="validate(true)"
-                [disabled]="form.invalid">
+                [disabled]="form.invalid || submitting">
           BETALEN
         </button>
       </mat-step>

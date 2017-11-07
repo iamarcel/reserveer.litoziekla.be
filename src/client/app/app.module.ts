@@ -3,12 +3,13 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule } from '@angular/material';
+import { MatToolbarModule, MatProgressBarModule } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { ApiService } from './api.service';
 import { LogService } from './log.service';
+import { LoadingService } from './loading.service';
 import { TagService } from './tag.service';
 
 import { ReservationsModule } from './reservations/reservations.module';
@@ -45,6 +46,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     // InMemoryWebApiModule.forRoot(AppData),
     MatToolbarModule,
+    MatProgressBarModule,
 
     ReservationsModule
   ],
@@ -52,7 +54,8 @@ const appRoutes: Routes = [
     { provide: LOCALE_ID, useValue: 'nl' },
     ApiService,
     TagService,
-    LogService
+    LogService,
+    LoadingService
   ],
   exports: [ ],
   bootstrap: [AppComponent]
