@@ -357,8 +357,12 @@ export default class SalesforceService {
     return this.countTotalQuantity()
       .map(quantities => {
         campaign.ChildCampaigns = campaign.ChildCampaigns.map(childCampaign => {
-          console.log(quantities);
-          childCampaign.TotalQuantity = quantities.find(q => q.CampaignId === childCampaign.Id).TotalQuantity;
+          const quantityForThisCampaign = quantities.find(q => q.CampaignId === childCampaign.Id);
+          if (quantityForThisCampaign) {
+            childCampaign.TotalQuantity = quantityForThisCampaign.TotalQuantity;
+          } else {
+            childCampaign.TotalQuantity = 0;
+          }
           return childCampaign;
         });
         return campaign;
