@@ -1,12 +1,14 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, LOCALE_ID } from '@angular/core';
+import { NgModule, LOCALE_ID, ErrorHandler } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatProgressBarModule } from '@angular/material';
+import { MatToolbarModule, MatProgressBarModule, MatDialogModule } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AppErrorHandler } from './app-error-handler';
 import { AppComponent } from './app.component';
+import { ErrorModalComponent } from './error-modal.component';
 import { ApiService } from './api.service';
 import { LogService } from './log.service';
 import { LoadingService } from './loading.service';
@@ -34,7 +36,11 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ErrorModalComponent
+  ],
+  entryComponents: [
+    ErrorModalComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -47,10 +53,15 @@ const appRoutes: Routes = [
     // InMemoryWebApiModule.forRoot(AppData),
     MatToolbarModule,
     MatProgressBarModule,
+    MatDialogModule,
 
     ReservationsModule
   ],
   providers: [
+    {
+      provide: ErrorHandler,
+      useClass: AppErrorHandler
+    },
     { provide: LOCALE_ID, useValue: 'nl' },
     ApiService,
     TagService,
