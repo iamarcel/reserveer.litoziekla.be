@@ -154,7 +154,7 @@ export default class SalesforceService {
           let campaign = records[0];
           let html = campaign.Hero_Image__c;
           campaign.Hero_Image__c =
-            (html || '').replace(/--c\..+\.content\.force\.com/, '.secure.force.com/test');
+            (html || '').replace(/--c\.documentforce\.com/, '.secure.force.com/test');
 
           // JSForce stores child relationships one level deeper in `records`
           campaign.ChildCampaigns = (campaign.ChildCampaigns as any).records;
@@ -357,7 +357,7 @@ export default class SalesforceService {
     return this.countTotalQuantity()
       .map(quantities => {
         campaign.ChildCampaigns = campaign.ChildCampaigns.map(childCampaign => {
-          const quantityForThisCampaign = quantities.find(q => q.CampaignId === childCampaign.Id);
+          const quantityForThisCampaign = quantities.find(q => q.CampaignId == childCampaign.Id);
           if (quantityForThisCampaign) {
             childCampaign.TotalQuantity = quantityForThisCampaign.TotalQuantity;
           } else {
