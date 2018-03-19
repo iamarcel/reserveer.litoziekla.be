@@ -39,7 +39,7 @@ export class ReservationService {
   put(reservation: Reservation): Observable<any> {
     const req$ = this.http
       .post(this.submitReservationUrl, reservation)
-      .map(response => response.json().data);
+      .map(response => response.json().data).share();
 
     this.loader.register(req$, 'Saving Reservation');
     return req$;
@@ -52,7 +52,8 @@ export class ReservationService {
   }> {
     const req$ = this.http
       .get(`${this.getReservationUrl}/${id}`)
-      .map(response => response.json());
+      .map(response => response.json()).share();
+
     this.loader.register(req$, 'Getting Reservation');
     return req$;
   }
@@ -64,7 +65,7 @@ export class ReservationService {
   methods(): Observable<Method[]> {
     const req$ = this.http
       .get(`${this.getMethodsUrl}`)
-      .map(response => Array.from(response.json()));
+      .map(response => Array.from(response.json())).share();
     // TODO Error handling - this is not an array if there's an error
 
     this.loader.register(req$, 'Getting payment methods');
