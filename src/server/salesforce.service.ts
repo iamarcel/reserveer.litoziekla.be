@@ -46,7 +46,9 @@ export default class SalesforceService {
   public static salesforce: SalesforceService;
 
   private connection: JSForce.Connection;
+  private _login$: Observable<JSForce.Connection>;
   private _production$: Subject<Campaign>;
+  private _productionRefresh$: Subject<any>;
   public production$: Observable<Campaign>;
   public sponsors$: Observable<Opportunity[]>;
   public pricebookEntries$: Observable<PricebookEntry[]>;
@@ -63,7 +65,7 @@ export default class SalesforceService {
     const connection = this.connection;
 
     // Log in every hour
-    const login$ = Observable
+    this._login$ = Observable
       .interval(1000 * 60 * 60)
       .startWith(0)
       .map(() => connection)
@@ -71,14 +73,17 @@ export default class SalesforceService {
       .publishReplay(1).refCount();
 
     // Log login data
-    login$.subscribe(
+    this._login$.subscribe(
       result => console.log('[LOG] Logged in to Salesforce.'),
       err => console.error('[ERR] while logging in to Salesforce:\n', err)
     );
 
     // Refresh production when login changed
     this._production$ = new Subject<Campaign>();
-    this.connectProductionObservable(login$, this._production$);
+    this._productionRefresh$ = new Subject<any>();
+    this.connectProductionObservable(
+      this._productionRefresh$.startWith(null),
+      this._production$);
     this.production$ = this
       ._production$
       .asObservable()
@@ -91,7 +96,7 @@ export default class SalesforceService {
 
     // Refresh sponsors & production
     this.sponsors$ = Observable
-      .combineLatest(login$, this.production$)
+      .combineLatest(this._login$, this.production$)
       .mergeMap(this.getSponsors)
       .publishReplay(1).refCount();
 
@@ -129,8 +134,11 @@ export default class SalesforceService {
         }));
   }
 
-  connectProductionObservable (login$: Observable<JSForce.Connection>, subject: Subject<Campaign>): void {
-    login$.subscribe(connection => {
+  connectProductionObservable (refresh$: Observable<any>, subject: Subject<Campaign>): void {
+    Observable.combineLatest(
+      this._login$,
+      refresh$
+    ).subscribe(([connection, _]) => {
       console.log('[LOG] Caching current production...');
       connection.sobject('Campaign')
         .find<Campaign>({
@@ -195,8 +203,8 @@ export default class SalesforceService {
       .toArray();
   };
 
-  setProduction (production: Campaign) {
-    this._production$.next(production);
+  queueProductionRefresh () {
+    this._productionRefresh$.next(null);
   }
 
   getPricebookEntries (connection: JSForce.Connection, campaign: Campaign): Observable<PricebookEntry[]> {

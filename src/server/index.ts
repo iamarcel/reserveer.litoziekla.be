@@ -68,10 +68,6 @@ app.get('/api/v1/current/productions/sponsors', (req, res) => {
   salesforce.sponsors$.take(1).subscribe(sponsors => res.json(sponsors));
 });
 
-// app.get('/api/v1/recordTypes', (req, res) => {
-//     res.json(mockData['record-types']);
-// });
-
 app.post('/api/v1/payments/check', mollie.checkPayment);
 
 const salesforce = Salesforce.setup();
@@ -205,18 +201,6 @@ app.post('/api/v1/reservations', (req, res) => {
           error: data.body ? JSON.stringify(data.body) : 'Unknown error.',
         });
       } else {
-        salesforce.production$.take(1).subscribe(campaign => {
-          console.log('[LOG] Updating cached available seats');
-          let thisCampaign = campaign.ChildCampaigns
-            .filter((campaign: Campaign) => campaign.Id == reservation.CampaignId)[0];
-          thisCampaign.TotalQuantity += reservation.Tickets.reduce(
-            (acc, t) => acc + t.amount, 0);
-          salesforce.setProduction(campaign);
-        });
-
-        console.log('[NICE] All done processing the reservation\n\n');
-        console.log(JSON.parse(data.body));
-
         const opportunity = JSON.parse(data.body);
 
         const orderUrl = `${SETTINGS.root}/order/${opportunity.Id}`;

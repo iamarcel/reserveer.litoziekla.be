@@ -26,10 +26,14 @@ export const checkPayment = (req, res) => {
         // Update Opportunity
         OpportunityService.confirm(opportunityId),
         // Update Mailchimp order status
-        Mail.mail.confirmPayment(opportunityId)
+        Mail.mail.confirmPayment(opportunityId),
       ).subscribe(([opportunity, mail]) => {
-          res.status(200).json(opportunity);
-        });
+        // Refresh Salesforce production
+        Salesforce.salesforce.queueProductionRefresh();
+
+        // Send response
+        res.status(200).json(opportunity);
+      });
 
       break;
     case 'expired':
