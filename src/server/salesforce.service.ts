@@ -197,7 +197,7 @@ export default class SalesforceService {
         })) as Observable<Opportunity>)
       .filter(o => !!(o.Logo__c))
       .map(o => {
-        o.Logo__c = o.Logo__c.replace(/--c\..+\.content\.force\.com/,'.secure.force.com/test');
+        o.Logo__c = o.Logo__c.replace(/--c\.documentforce\.com/, '.secure.force.com');
         return o;
       })
       .toArray();
