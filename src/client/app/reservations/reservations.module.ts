@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   MatSnackBarModule,
@@ -13,6 +14,8 @@ import {
   MatCheckboxModule,
   MatToolbarModule,
 } from '@angular/material';
+import { ShareButtonModule } from '@ngx-share/button';
+import { ShareButtonsModule } from '@ngx-share/buttons';
 
 import { ReservationsComponent } from './reservations.component';
 import { OrderStatusComponent } from './order-status.component';
@@ -25,6 +28,7 @@ import { TicketLineItemComponent } from './ticket-line-item/ticket-line-item.com
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    HttpClientModule,
     MatSnackBarModule,
     MatRadioModule,
     MatButtonModule,
@@ -35,6 +39,7 @@ import { TicketLineItemComponent } from './ticket-line-item/ticket-line-item.com
     MatStepperModule,
     MatCheckboxModule,
     MatToolbarModule,
+    ShareButtonsModule.forRoot()
   ],
   declarations: [
     ReservationsComponent,

@@ -11,7 +11,7 @@ import { Opportunity } from '../../../models/opportunity';
 import { Contact } from '../../../models/contact';
 import { Campaign } from '../../../models/campaign';
 
-export interface Method {
+export interface PaymentMethod {
   resource: 'method';
   id: string;
   description: string;
@@ -62,10 +62,10 @@ export class ReservationService {
     window.location.href = `${this.getReservationUrl}/${id}/pay`;
   }
 
-  methods(): Observable<Method[]> {
+  methods(): Observable<PaymentMethod[]> {
     const req$ = this.http
       .get(`${this.getMethodsUrl}`)
-      .map(response => Array.from(response.json())).share();
+      .map(response => Array.from(response.json()) as PaymentMethod[]).share();
     // TODO Error handling - this is not an array if there's an error
 
     this.loader.register(req$, 'Getting payment methods');

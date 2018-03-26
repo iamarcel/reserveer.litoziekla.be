@@ -1,10 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/theming';
+@import "~@fortawesome/fontawesome-free-webfonts/css/fa-brands.css";
+@import "~@fortawesome/fontawesome-free-webfonts/css/fa-solid.css";
+@import "~@fortawesome/fontawesome-free-webfonts/css/fontawesome.css";
+@import '~@ngx-share/button/styles/share-buttons';
+@import '~@ngx-share/button/styles/themes/material/material-light-theme';
 // Plus imports for other components in your app.
 
 // Include the base styles for Angular Material core. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
-@include mat-core();
+
+$lito-typography: mat-typography-config(
+  $font-family: 'Source Sans Pro, Roboto, sans'
+);
+
+@include mat-core($lito-typography);
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
@@ -22,15 +31,23 @@ $lito-app-theme: mat-light-theme($lito-app-primary, $lito-app-accent, $lito-app-
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($lito-app-theme);
+@include mat-base-typography($lito-typography);
+@include angular-material-typography($lito-typography);
 
 @keyframes spinner {
   to {transform: rotate(360deg);}
 }
 
+html {
+  height: 100%;
+  min-height: 100%;
+}
+
 body {
-    font-family: 'Roboto', 'Source Sans Pro','Helvetica Neue', sans-serif;
+    font-family: 'Source Sans Pro', 'Source Sans Pro', 'Helvetica Neue', sans-serif;
     padding: 0;
     margin: 0;
+    min-height: 100%;
 }
 
 a.icon {

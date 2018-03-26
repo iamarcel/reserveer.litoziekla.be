@@ -1,4 +1,17 @@
 <div class="order-status">
+  <mat-card class="order-status__card order-status__card--green">
+    <mat-card-title>Dankjewel!</mat-card-title>
+    <mat-card-content>
+      <p>NU DELEN.</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <share-buttons
+        [include]="['messenger', 'whatsapp', 'facebook', 'email']"
+        show="4"
+        theme="material-light"
+      ></share-buttons>
+    </mat-card-actions>
+  </mat-card>
   <mat-card class="order-status__card" *ngIf="reservation$ | async as reservation">
     <mat-card-title>Je Reservatie</mat-card-title>
     <mat-card-content>

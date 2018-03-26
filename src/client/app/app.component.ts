@@ -16,7 +16,7 @@ export class AppComponent {
   barValue$: Observable<number>;
 
   constructor (private loader: LoadingService) {
-    this.barValue$ = loader.progress$.map(x => x * 100);
+    this.barValue$ = this.loader.progress$.map(x => x * 100).delay(0);
   }
 
 }

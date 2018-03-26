@@ -11,7 +11,7 @@ import { Product2 } from '../../../models/product2';
 import { Reservation, Ticket } from '../../../models/reservation';
 
 import { CampaignService } from './campaign.service';
-import { ReservationService, Method } from './reservation.service';
+import { ReservationService, PaymentMethod } from './reservation.service';
 import { LogService } from '../log.service';
 import { TagService } from '../tag.service';
 
@@ -45,7 +45,7 @@ export class ReservationsComponent {
 
   form: FormGroup;
   error: string;
-  methods$: Observable<Method[]>;
+  methods$: Observable<PaymentMethod[]>;
 
   production: Campaign;
   show: Campaign;
