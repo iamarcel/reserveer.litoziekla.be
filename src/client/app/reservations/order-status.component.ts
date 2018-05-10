@@ -1,14 +1,17 @@
+
+import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
+
+import {switchMap, map, share} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/operator/switchMap';
+
+
 
 import { Opportunity } from '../../../models/opportunity';
 import { Campaign } from '../../../models/campaign';
 import { Contact } from '../../../models/contact';
 
-import { ReservationService } from './reservation.service';
+import { ReservationService, ReservationLookupResult } from './reservation.service';
 import { TagService } from '../tag.service';
 
 type PaymentStatusCode = 'unknown' | 'pending' | 'failed' | 'paid';
@@ -19,15 +22,13 @@ type PaymentStatusCode = 'unknown' | 'pending' | 'failed' | 'paid';
 })
 export class OrderStatusComponent implements OnInit {
 
-  reservation$: Observable<{
-    opportunity: Opportunity,
-    campaign: Campaign,
-    contact: Contact,
-  }>;
+  reservation$: Observable<ReservationLookupResult>;
   paymentStatus$: Observable<{
     message: string,
     code: PaymentStatusCode,
   }>;
+
+  shareDescription$: Observable<string>;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,12 +38,12 @@ export class OrderStatusComponent implements OnInit {
   ) {}
 
   ngOnInit () {
-    this.reservation$ = this.route.paramMap
-      .switchMap(
-        (params: ParamMap) => this.service.get(params.get('id')));
+    this.reservation$ = this.route.paramMap.pipe(
+      switchMap(
+        (params: ParamMap) => this.service.get(params.get('id'))));
 
-    this.paymentStatus$ = this.reservation$
-      .map(reservation => {
+    this.paymentStatus$ = this.reservation$.pipe(
+      map(reservation => {
         let message = 'Onbekend';
         let code: PaymentStatusCode = 'unknown';
         let icon = 'warning';
@@ -67,17 +68,17 @@ export class OrderStatusComponent implements OnInit {
         }
 
         return { message, code, icon };
-      });
+      }));
 
-    Observable.combineLatest(
-      this.paymentStatus$,
-      this.reservation$
-    ).subscribe(data => this.trackPurchase(data, this.tagService));
+    this.reservation$.subscribe(data => this.trackPurchase(data, this.tagService));
+
+    // this.shareDescription$ = this.reservation$.map(
+    //   reservation => `Ik ga kijken naar ${reservation.campaign.Name}! Kom je ook?`)
 
   }
 
-  trackPurchase([status, reservation], tagService) {
-    if (status.code !== 'paid') {
+  trackPurchase(reservation, tagService) {
+    if (reservation.opportunity.StageName !== 'Closed Won') {
       return;
     }
 

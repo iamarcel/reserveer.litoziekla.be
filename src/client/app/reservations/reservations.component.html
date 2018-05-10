@@ -46,15 +46,18 @@
             <mat-radio-button [value]="show.Id"
               (click)="setShow(show)"
               class="show-radio-button"
-              [class.disabled]="!show.IsActive"
+              [disabled]="!isShowReservable(show)"
               *ngFor="let show of production.ChildCampaigns">
               <p class="mat-body-2" style="margin: 0;">{{ show.Entrance__c }}</p>
               <span class="mat-body-1">
-                <span *ngIf="!showIsFull(show)">
+                <span *ngIf="isShowReservable(show)">
                   {{ show.MaximumProducts__c - show.TotalQuantity }} vrije plaatsen
                 </span>
                 <span *ngIf="showIsFull(show)">
                   Sorry, volzet!
+                </span>
+                <span *ngIf="isShowPast(show)">
+                  Reservaties gesloten.
                 </span>
               </span>
             </mat-radio-button>
@@ -83,18 +86,18 @@
       <mat-step formGroupName="contact" [stepControl]="stepContact" [completed]="form.valid">
         <ng-template matStepLabel>Contactgegevens</ng-template>
         <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
-        <mat-input-container class="">
+        <mat-form-field class="">
           <input matInput type="text"
                  placeholder="Voornaam"
                  formControlName="FirstName">
-        </mat-input-container>
-        <mat-input-container class="">
+        </mat-form-field>
+        <mat-form-field class="">
           <input matInput type="text"
                  placeholder="Achternaam"
                  required
                  formControlName="LastName">
-        </mat-input-container>
-        <mat-input-container class="">
+        </mat-form-field>
+        <mat-form-field class="">
           <input matInput type="email"
                  placeholder="E-mailadres"
                  required
@@ -102,18 +105,18 @@
           <mat-hint align="start">
             We zullen je op de hoogte houden van toekomstige voorstellingen! Je kan op elk moment uitschrijven.
           </mat-hint>
-        </mat-input-container>
-        <mat-input-container>
+        </mat-form-field>
+        <mat-form-field>
           <input matInput type="tel"
                  placeholder="Telefoonnummer"
                  formControlName="Phone">
-        </mat-input-container>
-        <mat-input-container>
+        </mat-form-field>
+        <mat-form-field>
           <textarea matInput
                     placeholder="Nog opmerkingen?"
                     formControlName="Comments">
           </textarea>
-        </mat-input-container>
+        </mat-form-field>
 
         <mat-checkbox formControlName="OptIn">
           Je mag me e-mails sturen

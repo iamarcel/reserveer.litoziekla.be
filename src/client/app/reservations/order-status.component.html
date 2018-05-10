@@ -1,14 +1,23 @@
 <div class="order-status">
-  <mat-card class="order-status__card order-status__card--green">
+  <mat-card
+    *ngIf="(paymentStatus$ | async)?.code == 'paid'"
+    class="order-status__card order-status__card--green">
     <mat-card-title>Dankjewel!</mat-card-title>
     <mat-card-content>
-      <p>NU DELEN.</p>
+      <p>
+        We hebben je reservatie en betaling ontvangen. Tot op de voorstelling!
+      </p>
+      <p>
+        Theater is leuker met meer goed volk. Wil je ons helpen meer mensen te bereiken en delen dat je komt kijken?
+      </p>
     </mat-card-content>
     <mat-card-actions align="end">
       <share-buttons
         [include]="['messenger', 'whatsapp', 'facebook', 'email']"
         show="4"
         theme="material-light"
+        url="https://litoziekla.be"
+        [description]="shareDescription$ | async"
       ></share-buttons>
     </mat-card-actions>
   </mat-card>

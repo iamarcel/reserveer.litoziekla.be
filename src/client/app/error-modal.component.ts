@@ -12,7 +12,7 @@ export class ErrorModalComponent {
   constructor(private dialogRef: MatDialogRef<ErrorModalComponent>,
               @Inject(MAT_DIALOG_DATA) private data: any) {
     if (data) {
-      this.message = data.message;
+      this.message = data.message || data;
     }
   }
 

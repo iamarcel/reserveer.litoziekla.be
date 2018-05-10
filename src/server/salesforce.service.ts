@@ -1,21 +1,21 @@
-import 'core-js';
 
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import {from as observableFrom, combineLatest as observableCombineLatest, interval as observableInterval,  Observable ,  Observer ,  Subject } from 'rxjs';
+
+import {publishReplay, map, startWith, toArray, filter, mergeMap, refCount, switchMap} from 'rxjs/operators';
+import 'core-js';
 import * as JSForce from 'jsforce';
 import { UserInfo } from 'jsforce/connection';
 
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/publishReplay';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/toArray';
+
+
+
+
+
+
+
+
+
+
 
 import { Campaign } from '../models/campaign';
 import { Opportunity } from '../models/opportunity';
@@ -65,12 +65,11 @@ export default class SalesforceService {
     const connection = this.connection;
 
     // Log in every hour
-    this._login$ = Observable
-      .interval(1000 * 60 * 60)
-      .startWith(0)
-      .map(() => connection)
-      .switchMap(this.login)
-      .publishReplay(1).refCount();
+    this._login$ = observableInterval(1000 * 60 * 60).pipe(
+      startWith(0),
+      map(() => connection),
+      switchMap(this.login),
+      publishReplay(1),refCount(),);
 
     // Log login data
     this._login$.subscribe(
@@ -82,28 +81,27 @@ export default class SalesforceService {
     this._production$ = new Subject<Campaign>();
     this._productionRefresh$ = new Subject<any>();
     this.connectProductionObservable(
-      this._productionRefresh$.startWith(null),
+      this._productionRefresh$.pipe(startWith(null)),
       this._production$);
     this.production$ = this
       ._production$
-      .asObservable()
-      .switchMap(this.addTotalQuantity.bind(this))
-      .publishReplay(1).refCount();
+      .asObservable().pipe(
+      switchMap(this.addTotalQuantity.bind(this)),
+      publishReplay(1),refCount(),);
     this.production$.subscribe(
       result => console.log('[LOG] Production updated.'),
       err => console.error('[ERR] while caching production:\n', err)
     );
 
     // Refresh sponsors & production
-    this.sponsors$ = Observable
-      .combineLatest(this._login$, this.production$)
-      .mergeMap(this.getSponsors)
-      .publishReplay(1).refCount();
+    this.sponsors$ = observableCombineLatest(this._login$, this.production$).pipe(
+      mergeMap(this.getSponsors),
+      publishReplay(1),refCount(),);
 
     // Refresh products
-    this.pricebookEntries$ = this.production$
-      .switchMap(production => this.getPricebookEntries(connection, production))
-      .publishReplay(1).refCount();
+    this.pricebookEntries$ = this.production$.pipe(
+      switchMap(production => this.getPricebookEntries(connection, production)),
+      publishReplay(1),refCount(),);
     this.pricebookEntries$.subscribe(
       result => console.log('[LOG] Products updated.'),
       err => console.error('[ERR] while caching products:\n', err)
@@ -112,7 +110,7 @@ export default class SalesforceService {
 
   login (connection: JSForce.Connection): Observable<JSForce.Connection> {
     console.log('[LOG] Logging in to Salesforce...');
-    return Observable.fromPromise(
+    return observableFrom(
       connection.login(SETTINGS['salesforce']['auth']['user'],
                        SETTINGS['salesforce']['auth']['pass'])
         .then(x => connection));
@@ -135,7 +133,7 @@ export default class SalesforceService {
   }
 
   connectProductionObservable (refresh$: Observable<any>, subject: Subject<Campaign>): void {
-    Observable.combineLatest(
+    observableCombineLatest(
       this._login$,
       refresh$
     ).subscribe(([connection, _]) => {
@@ -194,13 +192,13 @@ export default class SalesforceService {
         })
         .on('error', (err) => {
           observer.error(err);
-        })) as Observable<Opportunity>)
-      .filter(o => !!(o.Logo__c))
-      .map(o => {
+        })) as Observable<Opportunity>).pipe(
+      filter(o => !!(o.Logo__c)),
+      map(o => {
         o.Logo__c = o.Logo__c.replace(/--c\.documentforce\.com/, '.secure.force.com');
         return o;
-      })
-      .toArray();
+      }),
+      toArray(),);
   };
 
   queueProductionRefresh () {
@@ -266,8 +264,8 @@ export default class SalesforceService {
   }
 
   getOpportunityContact (opportunityId: string): Observable<Contact> {
-    return this.getOpportunityContactIds(opportunityId)
-      .switchMap(contactIds => {
+    return this.getOpportunityContactIds(opportunityId).pipe(
+      switchMap(contactIds => {
         const contactId = contactIds[0];
 
         return Observable.create((observer: Observer<Contact>) => {
@@ -289,7 +287,7 @@ export default class SalesforceService {
               observer.complete();
             })
         })
-      })
+      }))
   }
 
   getCampaign (id: string): Observable<Campaign> {
@@ -362,8 +360,8 @@ export default class SalesforceService {
   }
 
   addTotalQuantity (campaign: Campaign) {
-    return this.countTotalQuantity()
-      .map(quantities => {
+    return this.countTotalQuantity().pipe(
+      map(quantities => {
         campaign.ChildCampaigns = campaign.ChildCampaigns.map(childCampaign => {
           const quantityForThisCampaign = quantities.find(q => q.CampaignId == childCampaign.Id);
           if (quantityForThisCampaign) {
@@ -374,7 +372,7 @@ export default class SalesforceService {
           return childCampaign;
         });
         return campaign;
-      });
+      }));
   }
 
 }

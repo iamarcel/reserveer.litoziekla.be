@@ -13,11 +13,11 @@
     <a mat-icon-button class="number-input__button" (click)="removeTicket()">
       <mat-icon>remove_circle_outline</mat-icon>
     </a>
-    <mat-input-container>
+    <mat-form-field>
       <input matInput
              [placeholder]="ticket.ticketType.Name + 's'"
              formControlName="amount">
-    </mat-input-container>
+    </mat-form-field>
     <a mat-icon-button class="number-input__button" (click)="addTicket()">
       <mat-icon>add_circle_outline</mat-icon>
     </a>

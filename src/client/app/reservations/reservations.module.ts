@@ -14,8 +14,7 @@ import {
   MatCheckboxModule,
   MatToolbarModule,
 } from '@angular/material';
-import { ShareButtonModule } from '@ngx-share/button';
-import { ShareButtonsModule } from '@ngx-share/buttons';
+import { ShareButtonModule, ShareButtonsModule } from 'ngx-sharebuttons';
 
 import { ReservationsComponent } from './reservations.component';
 import { OrderStatusComponent } from './order-status.component';

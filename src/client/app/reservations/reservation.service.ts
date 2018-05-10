@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, pipe } from 'rxjs';
+import { map, share, tap } from 'rxjs/operators';
 
 import { LogService } from '../log.service';
 import { LoadingService } from '../loading.service';
 
-import { Reservation } from '../../../models/reservation';
+import { Reservation, ISubmitReservationResponse } from '../../../models/reservation';
 import { Opportunity } from '../../../models/opportunity';
 import { Contact } from '../../../models/contact';
 import { Campaign } from '../../../models/campaign';
+
+export interface ReservationLookupResult {
+  opportunity: Opportunity;
+  campaign: Campaign;
+  contact: Contact;
+}
 
 export interface PaymentMethod {
   resource: 'method';
@@ -32,27 +39,25 @@ export class ReservationService {
   private getReservationUrl = 'api/v1/reservation';
   private getMethodsUrl = 'api/v1/methods';
 
-  constructor(private http: Http,
+  constructor(private http: HttpClient,
               private logService: LogService,
               private loader: LoadingService) { }
 
   put(reservation: Reservation): Observable<any> {
     const req$ = this.http
-      .post(this.submitReservationUrl, reservation)
-      .map(response => response.json().data).share();
+      .post(this.submitReservationUrl, reservation).pipe(
+        map((response: ISubmitReservationResponse) => response.data),
+        share());
 
     this.loader.register(req$, 'Saving Reservation');
     return req$;
   }
 
-  get(id: string): Observable<{
-    opportunity: Opportunity,
-    campaign: Campaign,
-    contact: Contact,
-  }> {
+  get(id: string): Observable<ReservationLookupResult> {
     const req$ = this.http
-      .get(`${this.getReservationUrl}/${id}`)
-      .map(response => response.json()).share();
+      .get(`${this.getReservationUrl}/${id}`).pipe(
+        map((response: ReservationLookupResult) => response),
+        share());
 
     this.loader.register(req$, 'Getting Reservation');
     return req$;
@@ -64,8 +69,9 @@ export class ReservationService {
 
   methods(): Observable<PaymentMethod[]> {
     const req$ = this.http
-      .get(`${this.getMethodsUrl}`)
-      .map(response => Array.from(response.json()) as PaymentMethod[]).share();
+      .get(`${this.getMethodsUrl}`).pipe(
+        map((response: ArrayLike<PaymentMethod>) => Array.from(response)),
+        share());
     // TODO Error handling - this is not an array if there's an error
 
     this.loader.register(req$, 'Getting payment methods');

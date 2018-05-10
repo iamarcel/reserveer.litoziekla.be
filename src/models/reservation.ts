@@ -39,3 +39,10 @@ export class Ticket {
     Object.assign(this, values);
   }
 }
+
+export interface ISubmitReservationResponse {
+  error?: any;
+  data: {
+    location: string;
+  }
+}

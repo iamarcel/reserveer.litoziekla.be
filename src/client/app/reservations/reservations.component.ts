@@ -1,9 +1,13 @@
+
+import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
+
+import {map} from 'rxjs/operators';
 import { Component, ViewContainerRef } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray,
          AbstractControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
+
+
 
 import { Campaign } from '../../../models/campaign';
 import { Opportunity } from '../../../models/opportunity';
@@ -111,10 +115,10 @@ export class ReservationsComponent {
       }, err => this.displayError(err));
 
     this.loading++;
-    campaignService.getTicketTypes()
-      .map((tts: Product2[]) =>
+    campaignService.getTicketTypes().pipe(
+      map((tts: Product2[]) =>
            tts.map(t => new Ticket({ticketType: t}))
-          )
+          ))
       .subscribe(tickets => {
         console.log('Got ticket types', tickets);
         this.reservation.Tickets = tickets;
@@ -180,8 +184,19 @@ export class ReservationsComponent {
     this.error = err;
   }
 
-  showIsFull(show: Campaign) {
+  showIsFull(show: Campaign): boolean {
     return show.TotalQuantity >= show.MaximumProducts__c;
+  }
+
+  isShowPast(show: Campaign): boolean {
+    const now = Date.now();
+    const endDate = Date.parse(show.EndDate);
+
+    return now > endDate;
+  }
+
+  isShowReservable(show: Campaign): boolean {
+    return !this.showIsFull(show) && !this.isShowPast(show);
   }
 
   setShow(show: Campaign) {
@@ -193,7 +208,7 @@ export class ReservationsComponent {
     this.reservation.CampaignId = show.Id;
 
     // Send impressions to GTM
-    Observable.combineLatest(
+    observableCombineLatest(
       this.campaignService.getTicketTypes(),
       this.campaignService.getCurrentProduction(),
       this.campaignService.getSponsors())

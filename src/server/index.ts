@@ -1,29 +1,30 @@
+
+import { pipe, combineLatest as observableCombineLatest,  AsyncSubject ,  Observable } from 'rxjs';
+
+import {take, mergeMap, switchMap} from 'rxjs/operators';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as ApplicationInsights from 'applicationinsights';
 import * as Mollie from 'mollie-api-node';
 import SETTINGS from './settings';
 
-import { AsyncSubject } from 'rxjs/AsyncSubject';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/bindNodeCallback';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/last';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/reduce';
-import 'rxjs/add/operator/publishReplay';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/take';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { RxHR } from '@akanass/rx-http-request';
 
 import { Account } from '../models/account';
@@ -57,15 +58,15 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/api/v1/current/productions', (req, res) => {
-  salesforce.production$.take(1).subscribe((result) => res.json(result));
+  salesforce.production$.pipe(take(1)).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/tickets', (req, res) => {
-  salesforce.pricebookEntries$.take(1).subscribe((result) => res.json(result));
+  salesforce.pricebookEntries$.pipe(take(1)).subscribe((result) => res.json(result));
 });
 
 app.get('/api/v1/current/productions/sponsors', (req, res) => {
-  salesforce.sponsors$.take(1).subscribe(sponsors => res.json(sponsors));
+  salesforce.sponsors$.pipe(take(1)).subscribe(sponsors => res.json(sponsors));
 });
 
 app.post('/api/v1/payments/check', mollie.checkPayment);
@@ -90,7 +91,7 @@ app.get('/api/v1/reservation/:id', (req, res) => {
   }
 
 
-  Observable.combineLatest(
+  observableCombineLatest(
     salesforce.getOpportunity(id),
     salesforce.getOpportunityContact(id),
   ).subscribe(results => {
@@ -122,9 +123,9 @@ app.get('/api/v1/reservation/:id/campaign', (req, res) => {
   }
 
   salesforce
-    .getOpportunity(id)
-    .switchMap(
-      opportunity => salesforce.getCampaign(opportunity.CampaignId))
+    .getOpportunity(id).pipe(
+    switchMap(
+      opportunity => salesforce.getCampaign(opportunity.CampaignId)))
     .subscribe(c => res.json(c));
 });
 
@@ -206,11 +207,11 @@ app.post('/api/v1/reservations', (req, res) => {
         const orderUrl = `${SETTINGS.root}/order/${opportunity.Id}`;
 
         // Add to Mailchimp
-        Observable.combineLatest(
+        observableCombineLatest(
           salesforce.getOpportunityContact(opportunity.Id),
           salesforce.getOpportunityLineItems(opportunity.Id),
           salesforce.pricebookEntries$,
-        ).flatMap(
+        ).pipe(mergeMap(
           ([contact, lines, entries]) => mail.insertReservation(
             reservation,
             opportunity,
@@ -218,7 +219,7 @@ app.post('/api/v1/reservations', (req, res) => {
             lines,
             entries,
             orderUrl
-          ))
+          )))
           .subscribe(data => console.dir(data), err => console.error(err));
 
         // Create the payment

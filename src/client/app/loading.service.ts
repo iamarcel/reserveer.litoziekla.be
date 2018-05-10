@@ -1,12 +1,13 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  Subject ,  BehaviorSubject } from 'rxjs';
+
+import {scan, map, switchMap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/scan';
-import 'rxjs/add/operator/map';
+
+
+
+
+
 
 export interface IProcess {
   name: string;
@@ -22,16 +23,16 @@ export class LoadingService {
 
   constructor () {
     this.registration$ = new Subject();
-    this.processes$ = this.registration$.asObservable()
-      .scan((acc, curr) => acc.concat([curr]), []);
+    this.processes$ = this.registration$.asObservable().pipe(
+      scan<IProcess, any[]>((acc, curr) => acc.concat([curr]), []));
 
-    this.progress$ = this.processes$
-      .map(ps => ps.map(p => p.isCompleted$))
-      .switchMap(
-        curr => Observable.combineLatest(
+    this.progress$ = this.processes$.pipe(
+      map(ps => ps.map(p => p.isCompleted$)),
+      switchMap(
+        curr => observableCombineLatest(
           ...curr,
           (...completions) => completions.filter(c => c === true).length /
-              completions.length));
+              completions.length)),);
   }
 
   register (obs$: Observable<any>, name: string) {

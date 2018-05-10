@@ -1,6 +1,7 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class LogService {
@@ -10,16 +11,16 @@ export class LogService {
   logError(err: any) {
     let message: string = '';
 
-    if (err instanceof Response) {
-      const body = err.json();
-      const error = body.error || JSON.stringify(body);
+    if (err instanceof HttpResponse) {
+      const body = err.body;
+      const error = body || JSON.stringify(err);
       message = `${err.status} - ${err.statusText || ''} ${error}`;
     } else {
       message = err.message ? err.message : err.toString();
     }
 
     console.error(message);
-    return Observable.throw(message);
+    return observableThrowError(message);
   }
 
 }

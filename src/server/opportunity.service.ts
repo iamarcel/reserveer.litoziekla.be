@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { RxHR } from '@akanass/rx-http-request';
 import SETTINGS from './settings';
 
@@ -10,13 +12,13 @@ export default class OpportunityService {
       body: {
         OpportunityId
       }
-    }).map(data => {
+    }).pipe(map(data => {
       if (data.response.statusCode != 200) {
         throw new Error(JSON.stringify(data.body));
       }
 
       return data;
-    });
+    }));
   }
 
 }

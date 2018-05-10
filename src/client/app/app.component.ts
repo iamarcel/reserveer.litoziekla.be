@@ -1,7 +1,9 @@
+
+import {delay, map} from 'rxjs/operators';
 import { Component } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+
 
 import { LoadingService } from './loading.service';
 
@@ -16,7 +18,7 @@ export class AppComponent {
   barValue$: Observable<number>;
 
   constructor (private loader: LoadingService) {
-    this.barValue$ = this.loader.progress$.map(x => x * 100).delay(0);
+    this.barValue$ = this.loader.progress$.pipe(map(x => x * 100),delay(0),);
   }
 
 }

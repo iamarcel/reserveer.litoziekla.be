@@ -1,12 +1,15 @@
-import * as Mailchimp from 'mailchimp-api-v3'; // untyped :(
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/zip';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/do';
+
+import {of as observableOf, zip as observableZip,  Observable } from 'rxjs';
+
+import {tap, filter, switchMap} from 'rxjs/operators';
+import * as Mailchimp from 'mailchimp-api-v3';
+
+
+
+
+
+
+
 import { RxHR } from '@akanass/rx-http-request';
 import * as md5 from 'blueimp-md5';
 
@@ -67,15 +70,15 @@ export default class Mail {
   }
 
   public upsertCustomer(contact: Contact) {
-    return this.findCustomer(contact.Email)
-      .filter((response: any) => response.total_items >= 1)
-      .switchMap(() => this.addCustomer(contact));
+    return this.findCustomer(contact.Email).pipe(
+      filter((response: any) => response.total_items >= 1),
+      switchMap(() => this.addCustomer(contact)),);
   }
 
   public upsertProduct(entry: PricebookEntry) {
     return this.request.get(
-      `${this.storePath}/products/${entry.Product2.Id}`)
-      .switchMap(data => {
+      `${this.storePath}/products/${entry.Product2.Id}`).pipe(
+      switchMap(data => {
         const result = data.body;
         const mcProduct = {
           id: entry.Product2.Id,
@@ -100,7 +103,7 @@ export default class Mail {
               body: mcProduct
             });
         }
-      });
+      }));
   }
 
   public insertReservation(
@@ -111,10 +114,10 @@ export default class Mail {
     entries: PricebookEntry[],
     orderUrl: string,
   ) {
-    return Observable.zip(
-      Observable.of(true)
-        .filter(() => reservation.OptIn === true)
-        .switchMap(
+    return observableZip(
+      observableOf(true).pipe(
+        filter(() => reservation.OptIn === true),
+        switchMap(
           () => this.request.put(
             `${this.listPath}/members/${md5(contact.Email.toLowerCase())}`, {
               body: {
@@ -125,7 +128,7 @@ export default class Mail {
                   LNAME: contact.LastName
                 }
               }
-            })),
+            })),),
       this.request.post(
         `${this.storePath}/orders`, {
           body: {
@@ -151,8 +154,8 @@ export default class Mail {
               price: l.UnitPrice
             }))
           }
-        })
-        .do(data => console.log(`[LOG] Added opportunity ${opportunity.Id} in Mailchimp`)),
+        }).pipe(
+        tap(data => console.log(`[LOG] Added opportunity ${opportunity.Id} in Mailchimp`))),
       (listResponse, orderResponse) => listResponse
     );
   }

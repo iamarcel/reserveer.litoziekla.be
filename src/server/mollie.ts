@@ -1,6 +1,9 @@
+
+import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
+
+import {switchMap, filter} from 'rxjs/operators';
 import * as Mollie from 'mollie-api-node';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/combineLatest';
+
 
 import Mail from './mail';
 import Salesforce from './salesforce.service';
@@ -22,7 +25,7 @@ export const checkPayment = (req, res) => {
     const opportunityId = payment.metadata.OpportunityId;
     switch (payment.status) {
     case 'paid':
-      Observable.combineLatest(
+      observableCombineLatest(
         // Update Opportunity
         OpportunityService.confirm(opportunityId),
         // Update Mailchimp order status
@@ -41,13 +44,13 @@ export const checkPayment = (req, res) => {
     case 'cancelled':
     case 'refunded':
     case 'charged_back':
-      Salesforce.salesforce.getOpportunity(opportunityId)
-        .filter(opportunity => opportunity.PaymentId__c == payment.id)
-        .switchMap(
+      Salesforce.salesforce.getOpportunity(opportunityId).pipe(
+        filter(opportunity => opportunity.PaymentId__c == payment.id),
+        switchMap(
           () => Salesforce.salesforce.patchOpportunity({
             Id: payment.metadata.OpportunityId,
             StageName: 'Closed Lost',
-          })).subscribe();
+          })),).subscribe();
     case 'paidout':
     case 'pending':
     case 'open':
