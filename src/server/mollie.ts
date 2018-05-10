@@ -8,6 +8,7 @@ import * as Mollie from 'mollie-api-node';
 import Mail from './mail';
 import Salesforce from './salesforce.service';
 
+import { Opportunity } from '../models/opportunity';
 import OpportunityService from './opportunity.service';
 
 import SETTINGS from './settings';
@@ -45,7 +46,7 @@ export const checkPayment = (req, res) => {
     case 'refunded':
     case 'charged_back':
       Salesforce.salesforce.getOpportunity(opportunityId).pipe(
-        filter(opportunity => opportunity.PaymentId__c == payment.id),
+        filter((opportunity: Opportunity) => opportunity.PaymentId__c == payment.id),
         switchMap(
           () => Salesforce.salesforce.patchOpportunity({
             Id: payment.metadata.OpportunityId,

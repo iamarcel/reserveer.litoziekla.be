@@ -12,7 +12,7 @@ export default class OpportunityService {
       body: {
         OpportunityId
       }
-    }).pipe(map(data => {
+    }).pipe(map((data: any) => {
       if (data.response.statusCode != 200) {
         throw new Error(JSON.stringify(data.body));
       }

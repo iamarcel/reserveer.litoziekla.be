@@ -78,7 +78,7 @@ export default class Mail {
   public upsertProduct(entry: PricebookEntry) {
     return this.request.get(
       `${this.storePath}/products/${entry.Product2.Id}`).pipe(
-      switchMap(data => {
+        switchMap((data: any) => {
         const result = data.body;
         const mcProduct = {
           id: entry.Product2.Id,
