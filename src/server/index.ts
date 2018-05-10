@@ -32,6 +32,7 @@ import { Contact } from '../models/contact';
 import { Campaign } from '../models/campaign';
 import { PricebookEntry } from '../models/pricebook-entry';
 import { Reservation } from '../models/reservation';
+import { Opportunity } from '../models/opportunity';
 
 import * as mollie from './mollie';
 import Salesforce from './salesforce.service';
@@ -124,7 +125,7 @@ app.get('/api/v1/reservation/:id/campaign', (req, res) => {
 
   salesforce
     .getOpportunity(id).pipe(
-    switchMap(
+      switchMap<Opportunity, Campaign>(
       opportunity => salesforce.getCampaign(opportunity.CampaignId)))
     .subscribe(c => res.json(c));
 });

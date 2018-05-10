@@ -100,7 +100,7 @@ export default class SalesforceService {
 
     // Refresh products
     this.pricebookEntries$ = this.production$.pipe(
-      switchMap(production => this.getPricebookEntries(connection, production)),
+      switchMap<Campaign, PricebookEntry[]>(production => this.getPricebookEntries(connection, production)),
       publishReplay(1),refCount(),);
     this.pricebookEntries$.subscribe(
       result => console.log('[LOG] Products updated.'),
@@ -193,8 +193,8 @@ export default class SalesforceService {
         .on('error', (err) => {
           observer.error(err);
         })) as Observable<Opportunity>).pipe(
-      filter(o => !!(o.Logo__c)),
-      map(o => {
+          filter((o: Opportunity) => !!(o.Logo__c)),
+          map((o: Opportunity) => {
         o.Logo__c = o.Logo__c.replace(/--c\.documentforce\.com/, '.secure.force.com');
         return o;
       }),
@@ -361,7 +361,7 @@ export default class SalesforceService {
 
   addTotalQuantity (campaign: Campaign) {
     return this.countTotalQuantity().pipe(
-      map(quantities => {
+      map((quantities: CampaignQuantityCount[]) => {
         campaign.ChildCampaigns = campaign.ChildCampaigns.map(childCampaign => {
           const quantityForThisCampaign = quantities.find(q => q.CampaignId == childCampaign.Id);
           if (quantityForThisCampaign) {
