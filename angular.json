@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Litoziekla Reserveer": {
+    "litoziekla-reserveer": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -52,7 +52,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "serviceWorker": true,
+              "serviceWorker": false,
               "ngswConfigPath": "/src/ngsw-config.json",
               "fileReplacements": [
                 {
@@ -66,19 +66,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-              "browserTarget": "Litoziekla Reserveer:build",
+              "browserTarget": "litoziekla-reserveer:build",
               "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "Litoziekla Reserveer:build:production"
+              "browserTarget": "litoziekla-reserveer:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Litoziekla Reserveer:build"
+            "browserTarget": "litoziekla-reserveer:build"
           }
         },
         "test": {
@@ -122,7 +122,7 @@
         }
       }
     },
-    "Litoziekla Reserveer-e2e": {
+    "litoziekla-reserveer-e2e": {
       "root": "",
       "sourceRoot": "",
       "projectType": "application",
@@ -131,7 +131,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "Litoziekla Reserveer:serve"
+            "devServerTarget": "litoziekla-reserveer:serve"
           }
         },
         "lint": {
@@ -144,7 +144,7 @@
       }
     }
   },
-  "defaultProject": "Litoziekla Reserveer",
+  "defaultProject": "litoziekla-reserveer",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
