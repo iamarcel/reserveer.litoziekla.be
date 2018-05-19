@@ -375,4 +375,27 @@ export default class SalesforceService {
       }));
   }
 
+  postMessage (text: string, subjectId: string) {
+    (this.connection as any).chatter
+      .resource('/feed-elements')
+      .create({
+        body: {
+          messageSegments: [{
+            type: 'Text',
+            text
+          }, {
+            type: 'Mention',
+            id: '0F91p000000QOa4CAG'
+          }]
+        },
+        feedElementType: 'FeedItem',
+        subjectId
+      }, (err, result) => {
+        if (err) {
+          return console.error(err);
+        }
+        console.log(`Posted message: ${text}`);
+      })
+  }
+
 }
