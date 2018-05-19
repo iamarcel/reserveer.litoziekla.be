@@ -10,6 +10,7 @@ import Salesforce from './salesforce.service';
 
 import { Opportunity } from '../models/opportunity';
 import OpportunityService from './opportunity.service';
+import NotificationService from './notification.service';
 
 import SETTINGS from './settings';
 
@@ -50,12 +51,11 @@ export const checkPayment = (req, res) => {
           if (remainingValue > 0.0) {
             // Partial refund
             console.log(`[LOG] Reservation ${opportunityId} is partially refunded.`);
-            Salesforce.salesforce.postMessage(
-              "Hey bestuur! Deze reservatie werd gedeeltelijk terugbetaald. "
+            const message = "Hey bestuur! Deze reservatie werd gedeeltelijk terugbetaald. "
               + `Het resterende bedrag is € ${remainingValue}. `
-              + "Vergeten jullie niet het aantal tickets aan te passen?",
-              opportunityId
-            );
+              + "Vergeten jullie niet het aantal tickets aan te passen? \n"
+              + `<https://litoziekla.lightning.force.com/lightning/r/Opportunity/${opportunityId}/view|Open reservatie>`;
+            NotificationService.postChat(message);
           }
         } else {
           // Probably cancellation / expiration
