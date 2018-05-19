@@ -392,7 +392,7 @@ export default class SalesforceService {
         subjectId
       }, (err, result) => {
         if (err) {
-          return console.error(err);
+          throw new Error(err);
         }
         console.log(`Posted message: ${text}`);
       })
