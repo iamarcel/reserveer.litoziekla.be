@@ -1,161 +1,156 @@
 <div class="hero image"
-     [class.loading]="!production"
-     [innerHTML]="production ? production.Hero_Image__c : ''"></div>
+  [class.loading]="!production"
+  [innerHTML]="production ? production.Hero_Image__c : ''"></div>
 
-  <form class="content"
-        [formGroup]="form"
-        (ngSubmit)="submit(form)"
-        [class.loading]="loading > 0">
-
-    <h1 class="mdc-typography--headline stepper-indent">
-      Reserveer je tickets
-      <span *ngIf="production">
-        voor {{ production.Name }}
-      </span>
-    </h1>
-
-    <p class="mdc-typography--body1 stepper-indent">
-      Je tickets zijn gereserveerd op het moment dat we de betaling ontvangen
-      hebben.
-    </p>
-
-    <p class="mdc-typography--body1 stepper-indent">
-      Nog vragen? Problemen bij het reserveren? Contacteer ons:
-    </p>
-    <p class="mdc-typography--body1 stepper-indent text-center">
-      <a mat-button href="https://m.me/litoziekla" target="_blank" color="primary">MESSENGER</a>
-      <a mat-button href="mailto:info@litoziekla.be">EMAIL</a>
-    </p>
-
-      <div class="fb-messengermessageus"
-        app_id="123570874987445"
-        page_id="377509402358387"
-        color="blue"
-        size="standard"></div>
-
-    <mat-vertical-stepper formGroupName="stepper" linear>
-      <mat-step formGroupName="show" [stepControl]="stepShow">
-        <ng-template matStepLabel>Voorstelling</ng-template>
-
-        <div *ngIf="production">
-          <h3 class="mdc-typography--subheading2">Waar?</h3>
-          <p class="mdc-typography--body1">{{ production.Location__c }}</p>
-
-          <h3 class="mdc-typography--subheading2">Wanneer?</h3>
-          <mat-radio-group formControlName="ShowId">
-            <mat-radio-button [value]="show.Id"
-              (click)="setShow(show)"
-              class="show-radio-button"
-              [disabled]="!isShowReservable(show)"
-              *ngFor="let show of production.ChildCampaigns">
-              <p class="mat-body-2" style="margin: 0;">{{ show.Entrance__c }}</p>
-              <span class="mat-body-1">
-                <span *ngIf="isShowReservable(show)">
-                  {{ show.MaximumProducts__c - show.TotalQuantity }} vrije plaatsen
-                </span>
-                <span *ngIf="showIsFull(show)">
-                  Sorry, volzet!
-                </span>
-                <span *ngIf="isShowPast(show)">
-                  Reservaties gesloten.
-                </span>
-              </span>
-            </mat-radio-button>
-          </mat-radio-group>
-
-          <button mat-raised-button color="primary" matStepperNext [disabled]="stepShow.invalid" type="button">VOLGENDE</button>
-        </div>
-      </mat-step>
-      <mat-step formGroupName="tickets" [stepControl]="stepTickets">
-        <ng-template matStepLabel>Tickets</ng-template>
-        <div formArrayName="Tickets">
-          <h3 class="mdc-typography--subheading2">Hoe veel tickets wil je?</h3>
-          <div *ngFor="let ticket of reservation.Tickets; let i = index">
-            <app-ticket-line-item [form]="form.get('stepper').get('tickets').get('Tickets').controls[i]"
-                                  [ticket]="ticket"
-                                  (add)="addTicket(ticket)"
-                                  (remove)="removeTicket(ticket)"></app-ticket-line-item>
-          </div>
-
-          <button
-            mat-raised-button color="primary"
-            [disabled]="stepTickets.invalid"
-            matStepperNext type="button">VOLGENDE</button>
-        </div>
-      </mat-step>
-      <mat-step formGroupName="contact" [stepControl]="stepContact" [completed]="form.valid">
-        <ng-template matStepLabel>Contactgegevens</ng-template>
-        <span class="mdc-typography--caption">Velden met een * zijn verplicht.</span>
-        <mat-form-field class="">
-          <input matInput type="text"
-                 placeholder="Voornaam"
-                 formControlName="FirstName">
-        </mat-form-field>
-        <mat-form-field class="">
-          <input matInput type="text"
-                 placeholder="Achternaam"
-                 required
-                 formControlName="LastName">
-        </mat-form-field>
-        <mat-form-field class="">
-          <input matInput type="email"
-                 placeholder="E-mailadres"
-                 required
-                 formControlName="Email">
-          <mat-hint align="start">
-            We zullen je op de hoogte houden van toekomstige voorstellingen! Je kan op elk moment uitschrijven.
-          </mat-hint>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="tel"
-                 placeholder="Telefoonnummer"
-                 formControlName="Phone">
-        </mat-form-field>
-        <mat-form-field>
-          <textarea matInput
-                    placeholder="Nog opmerkingen?"
-                    formControlName="Comments">
-          </textarea>
-        </mat-form-field>
-
-        <mat-checkbox formControlName="OptIn">
-          Je mag me e-mails sturen
-        </mat-checkbox>
-        <small class="mat-caption">
-          Mogen we je laten weten als we iets spannends te vertellen hebben?
-        </small>
-
-        <div *ngIf="formErrors.length > 0" class="form-errors mdc-typography--body1">
-          <span>Oeps, ik denk dat je een foutje hebt getypt. Kijk je het nog even na?</span>
-          <ul>
-            <li *ngFor="let error of formErrors">
-              {{ error }}
-            </li>
-          </ul>
-        </div>
-
-        <button mat-raised-button color="primary"
-                type="submit"
-                (click)="validate(true)"
-                [disabled]="form.invalid || submitting">
-          BETALEN
-        </button>
-      </mat-step>
-    </mat-vertical-stepper>
-
-  </form>
-
-<div class="content sponsors"
-    [class.loading]="loading > 0 && (!sponsors || sponsors.length <= 0)">
-  <h2 class="mdc-typography--headline">Met dank aan onze sponsors</h2>
-  <p class="mdc-typography--body1">Zij maakten deze productie mogelijk!</p>
-  <div class="sponsor-grid">
-    <div *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
-  </div>
+<div class="sponsors">
+  <sponsors></sponsors>
 </div>
 
+<form class="content"
+  [formGroup]="form"
+  (ngSubmit)="submit(form)"
+  [class.loading]="loading > 0">
+
+  <h1 class="mat-headline stepper-indent">
+    Reserveer je tickets
+    <span *ngIf="production">
+      voor {{ production.Name }}
+    </span>
+  </h1>
+
+  <p class="mat-body stepper-indent">
+    Je tickets zijn gereserveerd op het moment dat we de betaling ontvangen
+    hebben.
+  </p>
+
+  <p class="mat-body stepper-indent">
+    Nog vragen? Problemen bij het reserveren? Contacteer ons:
+  </p>
+  <p class="mat-body stepper-indent text-center">
+    <a mat-button href="https://m.me/litoziekla" target="_blank" color="primary">MESSENGER</a>
+    <a mat-button href="mailto:info@litoziekla.be">EMAIL</a>
+  </p>
+
+  <div class="fb-messengermessageus"
+    app_id="123570874987445"
+    page_id="377509402358387"
+    color="blue"
+    size="standard"></div>
+
+  <mat-vertical-stepper formGroupName="stepper" linear>
+    <mat-step formGroupName="show" [stepControl]="stepShow">
+      <ng-template matStepLabel>Voorstelling</ng-template>
+
+      <div *ngIf="production">
+        <h3 class="mat-subheading-2">Waar?</h3>
+        <p class="mat-body">{{ production.Location__c }}</p>
+
+        <h3 class="mat-subheading-2">Wanneer?</h3>
+        <mat-radio-group formControlName="ShowId">
+          <mat-radio-button [value]="show.Id"
+            (click)="setShow(show)"
+            class="show-radio-button"
+            [disabled]="!isShowReservable(show)"
+            *ngFor="let show of production.ChildCampaigns">
+            <p class="mat-body-2" style="margin: 0;">{{ show.Entrance__c }}</p>
+            <span class="mat-body-1">
+              <span *ngIf="isShowReservable(show)">
+                {{ show.MaximumProducts__c - show.TotalQuantity }} vrije plaatsen
+              </span>
+              <span *ngIf="showIsFull(show)">
+                Sorry, volzet!
+              </span>
+              <span *ngIf="isShowPast(show)">
+                Reservaties gesloten.
+              </span>
+            </span>
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <button mat-raised-button color="primary" matStepperNext [disabled]="stepShow.invalid" type="button">VOLGENDE</button>
+      </div>
+    </mat-step>
+    <mat-step formGroupName="tickets" [stepControl]="stepTickets">
+      <ng-template matStepLabel>Tickets</ng-template>
+      <div formArrayName="Tickets">
+        <h3 class="mat-subheading-2">Hoe veel tickets wil je?</h3>
+        <div *ngFor="let ticket of reservation.Tickets; let i = index">
+          <app-ticket-line-item [form]="form.get('stepper').get('tickets').get('Tickets').controls[i]"
+            [ticket]="ticket"
+            (add)="addTicket(ticket)"
+            (remove)="removeTicket(ticket)"></app-ticket-line-item>
+        </div>
+
+        <button
+          mat-raised-button color="primary"
+          [disabled]="stepTickets.invalid"
+          matStepperNext type="button">VOLGENDE</button>
+      </div>
+    </mat-step>
+    <mat-step formGroupName="contact" [stepControl]="stepContact" [completed]="form.valid">
+      <ng-template matStepLabel>Contactgegevens</ng-template>
+      <span class="mat-caption">Velden met een * zijn verplicht.</span>
+      <mat-form-field class="">
+        <input matInput type="text"
+          placeholder="Voornaam"
+          formControlName="FirstName">
+      </mat-form-field>
+      <mat-form-field class="">
+        <input matInput type="text"
+          placeholder="Achternaam"
+          required
+          formControlName="LastName">
+      </mat-form-field>
+      <mat-form-field class="">
+        <input matInput type="email"
+          placeholder="E-mailadres"
+          required
+          formControlName="Email">
+        <mat-hint align="start">
+          We zullen je op de hoogte houden van toekomstige voorstellingen! Je kan op elk moment uitschrijven.
+        </mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="tel"
+          placeholder="Telefoonnummer"
+          formControlName="Phone">
+      </mat-form-field>
+      <mat-form-field>
+        <textarea matInput
+          placeholder="Nog opmerkingen?"
+          formControlName="Comments">
+        </textarea>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="OptIn">
+        Je mag me e-mails sturen
+      </mat-checkbox>
+      <small class="mat-caption">
+        Mogen we je laten weten als we iets spannends te vertellen hebben?
+      </small>
+
+      <div *ngIf="formErrors.length > 0" class="form-errors mat-body">
+        <span>Oeps, ik denk dat je een foutje hebt getypt. Kijk je het nog even na?</span>
+        <ul>
+          <li *ngFor="let error of formErrors">
+            {{ error }}
+          </li>
+        </ul>
+      </div>
+
+      <button mat-raised-button color="primary"
+        type="submit"
+        (click)="validate(true)"
+        [disabled]="form.invalid || submitting">
+        BETALEN
+      </button>
+    </mat-step>
+  </mat-vertical-stepper>
+
+</form>
+
 <div class="ui negative message"
-     *ngIf="error">
+  *ngIf="error">
   {{ error }}
 </div>
 

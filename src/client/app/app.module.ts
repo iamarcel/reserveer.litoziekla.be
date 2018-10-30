@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatProgressBarModule, MatDialogModule } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 import localeNLBE from '@angular/common/locales/nl-BE';
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { AppErrorHandler } from './app-error-handler';
 import { AppComponent } from './app.component';
@@ -58,6 +59,8 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatProgressBarModule,
     MatDialogModule,
+
+    DragScrollModule,
 
     ReservationsModule
   ],

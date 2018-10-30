@@ -1,7 +1,9 @@
 @import '~@angular/material/theming';
-@import "~@fortawesome/fontawesome-free-webfonts/css/fa-brands.css";
-@import "~@fortawesome/fontawesome-free-webfonts/css/fa-solid.css";
-@import "~@fortawesome/fontawesome-free-webfonts/css/fontawesome.css";
+
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
 @import '~ngx-sharebuttons/styles/share-buttons';
 @import '~ngx-sharebuttons/styles/themes/material/material-light-theme';
 // Plus imports for other components in your app.
@@ -321,19 +323,6 @@ mat-radio-button p {
   }
 }
 
-.sponsor-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-
-  & > * {
-    width: 30%;
-    padding: 1%;
-  }
-}
-
 mat-vertical-stepper [mat-raised-button] {
   width: 100%;
   margin-top: 1em;
@@ -341,4 +330,23 @@ mat-vertical-stepper [mat-raised-button] {
 
 .text-center {
   text-align: center;
+}
+
+.sponsors {
+  border: 1px solid #ccc;
+  padding: 1em;
+  margin: 1em;
+  color: #666;
+}
+
+.mb0 {
+  margin-bottom: 0;
+}
+
+.mt0 {
+  margin-top: 0;
+}
+
+.ma1 {
+  margin: 1em;
 }

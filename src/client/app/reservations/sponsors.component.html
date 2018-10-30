@@ -1,0 +1,14 @@
+<h4 class="mat-headline-1 mt0 mb0">
+  <mat-icon inline="true">info_outline</mat-icon>
+  Sponsors
+</h4>
+<p class="mat-body mt0">
+  Zonder hen was deze productie niet mogelijk. Dankjewel!<br>
+  <span class="mat-caption">Klik op de afbeeldingen om hun website te bezoeken.</span>
+</p>
+<drag-scroll
+  [class.loading]="(!sponsors || sponsors.length <= 0)"
+  class="new-sponsor-grid"
+  #sponsorNav>
+  <div drag-scroll-item *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
+</drag-scroll>

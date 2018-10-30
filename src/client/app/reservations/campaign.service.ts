@@ -58,7 +58,7 @@ export class CampaignService {
         last(),publishReplay(1),refCount(),);
     }
 
-    this.loader.register(this._production, 'Getting sponsors');
+    this.loader.register(this._sponsors, 'Getting sponsors');
     return this._sponsors;
   }
 }

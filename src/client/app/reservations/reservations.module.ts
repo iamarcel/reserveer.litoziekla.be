@@ -15,9 +15,11 @@ import {
   MatToolbarModule,
 } from '@angular/material';
 import { ShareButtonModule, ShareButtonsModule, ShareButtonsOptions } from 'ngx-sharebuttons';
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { ReservationsComponent } from './reservations.component';
 import { OrderStatusComponent } from './order-status.component';
+import { SponsorsComponent } from './sponsors.component';
 
 import { CampaignService } from './campaign.service';
 import { ReservationService } from './reservation.service';
@@ -57,12 +59,14 @@ const buttonsConfig = {
     MatStepperModule,
     MatCheckboxModule,
     MatToolbarModule,
-    ShareButtonsModule.forRoot(options, buttonsConfig)
+    ShareButtonsModule.forRoot(options, buttonsConfig),
+    DragScrollModule,
   ],
   declarations: [
     ReservationsComponent,
     TicketLineItemComponent,
     OrderStatusComponent,
+    SponsorsComponent
   ],
   exports: [ ReservationsComponent, OrderStatusComponent ],
   providers: [

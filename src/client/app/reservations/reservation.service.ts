@@ -78,4 +78,26 @@ export class ReservationService {
     return req$;
   }
 
+  trackPurchase(tagService, reservation) {
+    if (reservation.opportunity.StageName !== 'Closed Won') {
+      return;
+    }
+
+    // Send to GTM
+    tagService.push({
+      'event': 'purchase',
+      'ecommerce': {
+        'currencyCode': 'EUR',
+        'purchase': {
+          'actionField': {
+            'id': reservation.opportunity ? reservation.opportunity.Id : 'UNKNOWN_OPPORTUNITY',
+            'revenue': reservation.opportunity.Amount,
+            'shipping': 0,
+            'tax': 0
+          }
+        }
+      }
+    });
+  }
+
 }

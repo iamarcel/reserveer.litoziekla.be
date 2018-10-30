@@ -1,13 +1,10 @@
-
-import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
-
-import {map} from 'rxjs/operators';
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef, ViewChild } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray,
          AbstractControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 
-
+import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import { Campaign } from '../../../models/campaign';
 import { Opportunity } from '../../../models/opportunity';
@@ -126,29 +123,8 @@ export class ReservationsComponent {
         this._buildForm();
       }, err => this.displayError(err));
 
-    this.loading++;
-    campaignService.getSponsors()
-      .subscribe(sponsors => {
-        this.sponsors = sponsors;
-        this.loading--;
-      }, this.displayError);
-
     this._buildForm();
 
-    // Send sponsor impressions to GTM
-    campaignService.getSponsors()
-      .subscribe(sponsors => {
-        this.tagService.push({
-          'ecommerce': {
-            'currencyCode': 'EUR',
-            'impressions': sponsors.map(s => ({
-              'name': s.Name,
-              'id': s.Id,
-              'category': 'sponsor'
-            }))
-          }
-        });
-      });
   }
 
   _buildForm(): void {

@@ -5,8 +5,6 @@ import {switchMap, map, share} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
-
-
 import { Opportunity } from '../../../models/opportunity';
 import { Campaign } from '../../../models/campaign';
 import { Contact } from '../../../models/contact';
@@ -70,33 +68,7 @@ export class OrderStatusComponent implements OnInit {
         return { message, code, icon };
       }));
 
-    this.reservation$.subscribe(data => this.trackPurchase(data, this.tagService));
-
-    // this.shareDescription$ = this.reservation$.map(
-    //   reservation => `Ik ga kijken naar ${reservation.campaign.Name}! Kom je ook?`)
-
-  }
-
-  trackPurchase(reservation, tagService) {
-    if (reservation.opportunity.StageName !== 'Closed Won') {
-      return;
-    }
-
-    // Send to GTM
-    tagService.push({
-      'event': 'purchase',
-      'ecommerce': {
-        'currencyCode': 'EUR',
-        'purchase': {
-          'actionField': {
-            'id': reservation.opportunity ? reservation.opportunity.Id : 'UNKNOWN_OPPORTUNITY',
-            'revenue': reservation.opportunity.Amount,
-            'shipping': 0,
-            'tax': 0
-          }
-        }
-      }
-    });
+    this.reservation$.subscribe(x => this.service.trackPurchase(this.tagService, x));
   }
 
   processPayment (statusCode: PaymentStatusCode, reservationId: string) {
