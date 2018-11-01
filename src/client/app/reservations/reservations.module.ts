@@ -14,7 +14,8 @@ import {
   MatCheckboxModule,
   MatToolbarModule,
 } from '@angular/material';
-import { ShareButtonModule, ShareButtonsModule, ShareButtonsOptions } from 'ngx-sharebuttons';
+import { ShareModule, ShareButtonsOptions } from '@ngx-share/core';
+import { ShareButtonsModule } from '@ngx-share/buttons';
 import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { ReservationsComponent } from './reservations.component';
@@ -59,7 +60,10 @@ const buttonsConfig = {
     MatStepperModule,
     MatCheckboxModule,
     MatToolbarModule,
-    ShareButtonsModule.forRoot(options, buttonsConfig),
+    ShareButtonsModule.forRoot({
+      options,
+      prop: buttonsConfig
+    }),
     DragScrollModule,
   ],
   declarations: [

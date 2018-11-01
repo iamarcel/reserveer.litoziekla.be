@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, pipe } from 'rxjs';
-import {refCount, publishReplay, last, map} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { refCount, publishReplay, last, map } from 'rxjs/operators';
 
 import { ApiService } from '../api.service';
 import { LoadingService } from '../loading.service';
@@ -31,9 +31,11 @@ export class CampaignService {
 
   getCurrentProduction(): Observable<Campaign> {
     if (!this._production) {
-      this._production = this.http.get(this.currentProductionUrl).pipe(
-        map(response => response as Campaign),
-        last(),publishReplay(1),refCount(),);
+      this._production = this.http.get<Campaign>(this.currentProductionUrl).pipe(
+        last(),
+        publishReplay(1),
+        refCount()
+      );
     }
     this.loader.register(this._production, 'Getting production');
     return this._production;
@@ -42,9 +44,11 @@ export class CampaignService {
 
   getTicketTypes(): Observable<Product2[]> {
     if (!this._ticketTypes) {
-      this._ticketTypes = this.http.get(this.ticketsUrl).pipe(
-        map(response => response as Product2[]),
-        last(),publishReplay(1),refCount(),);
+      this._ticketTypes = this.http.get<Product2[]>(this.ticketsUrl).pipe(
+        last(),
+        publishReplay(1),
+        refCount()
+      );
     }
     this.loader.register(this._production, 'Getting ticket types');
     return this._ticketTypes;
@@ -53,9 +57,11 @@ export class CampaignService {
 
   getSponsors(): Observable<Opportunity[]> {
     if (!this._sponsors) {
-      this._sponsors = this.http.get(this.sponsorsUrl).pipe(
-        map(response => response as Opportunity[]),
-        last(),publishReplay(1),refCount(),);
+      this._sponsors = this.http.get<Opportunity[]>(this.sponsorsUrl).pipe(
+        last(),
+        publishReplay(1),
+        refCount()
+      )
     }
 
     this.loader.register(this._sponsors, 'Getting sponsors');

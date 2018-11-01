@@ -34,7 +34,7 @@ export class SponsorsComponent implements OnInit {
       }
 
       // Width of an item is 28%, so the current index is the one but last item
-      if (this.ds.currIndex >= this.sponsors.length - 2) {
+      if (this.ds.currIndex >= this.sponsors.length - 3) {
         this.ds.moveTo(0)
       } else {
         this.ds.moveRight()
