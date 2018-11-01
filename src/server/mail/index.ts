@@ -24,12 +24,12 @@ import SETTINGS from '../settings';
 
 export default class Mail {
 
+  public static mail: Mail;
+
   private mailchimp;
   private storePath: string;
   private listPath: string;
   private request: typeof RxHR;
-
-  public static mail: Mail;
 
   public static setup (api_key: string, store_id: string, list_id: string) {
     Mail.mail = new Mail(api_key, store_id, list_id);
@@ -72,7 +72,7 @@ export default class Mail {
   public upsertCustomer(contact: Contact) {
     return this.findCustomer(contact.Email).pipe(
       filter((response: any) => response.total_items >= 1),
-      switchMap(() => this.addCustomer(contact)),);
+      switchMap(() => this.addCustomer(contact)), );
   }
 
   public upsertProduct(entry: PricebookEntry) {
@@ -128,7 +128,7 @@ export default class Mail {
                   LNAME: contact.LastName
                 }
               }
-            })),),
+            })), ),
       this.request.post(
         `${this.storePath}/orders`, {
           body: {

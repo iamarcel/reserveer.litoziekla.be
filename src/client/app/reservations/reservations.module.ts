@@ -17,6 +17,7 @@ import {
 import { ShareModule, ShareButtonsOptions } from '@ngx-share/core';
 import { ShareButtonsModule } from '@ngx-share/buttons';
 import { DragScrollModule } from 'ngx-drag-scroll';
+import { NgxJsonLdModule } from '@ngx-lite/json-ld';
 
 import { ReservationsComponent } from './reservations.component';
 import { OrderStatusComponent } from './order-status.component';
@@ -65,6 +66,7 @@ const buttonsConfig = {
       prop: buttonsConfig
     }),
     DragScrollModule,
+    NgxJsonLdModule,
   ],
   declarations: [
     ReservationsComponent,

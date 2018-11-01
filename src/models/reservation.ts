@@ -33,7 +33,7 @@ export class Reservation {
 export class Ticket {
 
   public ticketType: PricebookEntry;
-  public amount: number = 0;
+  public amount = 0;
 
   constructor(values: Object) {
     Object.assign(this, values);

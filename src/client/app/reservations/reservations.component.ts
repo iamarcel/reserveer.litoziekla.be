@@ -59,6 +59,32 @@ export class ReservationsComponent {
 
   formErrors: string[] = [];
 
+  schema = {
+    "@context": "http://schema.org",
+    "@type": "TheaterEvent",
+    "name": "",
+    // "description": "Sint San gaat over twee broers die in Sint-Jozef Cafasso leven, onder leiding van Moeder Overste. Tijdens de oorlog verloren de broers hun moeder door een bombardement en stierf hun vader aan stoflong, maar ondanks alle tegenslagen gaven ze niet op en gingen ze op zoek naar een nieuwe kracht, het geloof in Sint San. De broers vertellen u hun verhaal: een wirwar van mirakels en sprookjes, van verstoppen en vluchten en ergens onder al die verhalen ligt de echte werkelijkheid... ",
+    "location": {
+      "@type": "Place",
+      "name": "",
+      "address": "9700 Oudenaarde",
+    },
+    "offers": [
+    ],
+    "inLanguage": "nl-BE",
+    "startDate": "",
+    "endDate": "",
+    // "image": "https://i.imgur.com/3CA40TU.jpg",
+    "performer": {
+      "logo": "http://reserveer.litoziekla.be/client/assets/logo-white.svg",
+      "email": "info@litoziekla.be",
+      "sameAs": "http://litoziekla.be",
+      "legalName": "Jeugdtheater Litoziekla* vzw",
+      "name": "Litoziekla",
+      "description": "Jeugdtheater LITOZIEKLA* vzw is een jonge, dynamische theatergroep uit Oudenaarde die op 26 februari 1986 is opgericht. Wat ooit begon als een onschuldig toneeltje in een garage is nu uitgegroeid tot een bekend begrip in Oudenaarde."
+    }
+  };
+
   get stepper(): AbstractControl | null {
     return this.form.get('stepper');
   }
@@ -106,9 +132,20 @@ export class ReservationsComponent {
     this.loading++;
     campaignService.getCurrentProduction()
       .subscribe(production => {
-        console.log('Got the production', production);
         this.production = production;
         this.loading--;
+
+        this.schema = {
+          ...this.schema,
+          name: production.Name,
+          location: {
+            "@type": "Place",
+            name: production.Location__c,
+            address: "Oudenaarde"
+          },
+          startDate: production.ChildCampaigns[0].StartDate,
+          endDate: production.ChildCampaigns[production.ChildCampaigns.length - 1].EndDate
+        }
       }, err => this.displayError(err));
 
     this.loading++;
@@ -117,7 +154,15 @@ export class ReservationsComponent {
            tts.map(t => new Ticket({ticketType: t}))
           ))
       .subscribe(tickets => {
-        console.log('Got ticket types', tickets);
+        this.schema = {
+          ...this.schema,
+          offers: tickets.map(ticket => ({
+            "@type": "Offer",
+            "price": ticket.ticketType.UnitPrice,
+            "priceCurrency": "EUR",
+            "url": "https://reserveer.litoziekla.be"
+          }))
+        }
         this.reservation.Tickets = tickets;
         this.loading--;
         this._buildForm();

@@ -69,7 +69,7 @@ export default class SalesforceService {
       startWith(0),
       map(() => connection),
       switchMap(this.login),
-      publishReplay(1),refCount(),);
+      publishReplay(1), refCount(), );
 
     // Log login data
     this._login$.subscribe(
@@ -87,7 +87,7 @@ export default class SalesforceService {
       ._production$
       .asObservable().pipe(
       switchMap(this.addTotalQuantity.bind(this)),
-      publishReplay(1),refCount(),);
+      publishReplay(1), refCount(), );
     this.production$.subscribe(
       result => console.log('[LOG] Production updated.'),
       err => console.error('[ERR] while caching production:\n', err)
@@ -96,12 +96,12 @@ export default class SalesforceService {
     // Refresh sponsors & production
     this.sponsors$ = observableCombineLatest(this._login$, this.production$).pipe(
       mergeMap(this.getSponsors),
-      publishReplay(1),refCount(),);
+      publishReplay(1), refCount(), );
 
     // Refresh products
     this.pricebookEntries$ = this.production$.pipe(
       switchMap<Campaign, PricebookEntry[]>(production => this.getPricebookEntries(connection, production)),
-      publishReplay(1),refCount(),);
+      publishReplay(1), refCount(), );
     this.pricebookEntries$.subscribe(
       result => console.log('[LOG] Products updated.'),
       err => console.error('[ERR] while caching products:\n', err)
@@ -198,7 +198,7 @@ export default class SalesforceService {
         o.Logo__c = o.Logo__c.replace(/--c\.documentforce\.com/, '.secure.force.com');
         return o;
       }),
-      toArray(),);
+      toArray(), );
   };
 
   queueProductionRefresh () {
@@ -213,7 +213,7 @@ export default class SalesforceService {
           'Pricebook2Id': campaign.DefaultPricebook2__c
         }, PRICEBOOKENTRY_FIELDS)
         .execute({}, (err, result) => {
-          if (err) return observer.error(err);
+          if (err) { return observer.error(err); }
           observer.next(result);
           observer.complete();
         });

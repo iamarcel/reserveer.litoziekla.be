@@ -51,9 +51,9 @@ export const checkPayment = (req, res) => {
           if (remainingValue > 0.0) {
             // Partial refund
             console.log(`[LOG] Reservation ${opportunityId} is partially refunded.`);
-            const message = "Hey bestuur! Deze reservatie werd gedeeltelijk terugbetaald. "
+            const message = 'Hey bestuur! Deze reservatie werd gedeeltelijk terugbetaald. '
               + `Het resterende bedrag is € ${remainingValue}. `
-              + "Vergeten jullie niet het aantal tickets aan te passen? \n"
+              + 'Vergeten jullie niet het aantal tickets aan te passen? \n'
               + `<https://litoziekla.lightning.force.com/lightning/r/Opportunity/${opportunityId}/view|Open reservatie>`;
             NotificationService.postChat(message);
           }
