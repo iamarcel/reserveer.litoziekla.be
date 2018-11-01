@@ -275,6 +275,20 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.7"
 
+"@fortawesome/free-brands-svg-icons@^5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-5.4.2.tgz#3abed8383d8d24010b22b592751c30b9150d8813"
+  integrity sha512-Pb1D/VWa/L0W+/LfZqQJ3I3tf96Q/nDwinkMfL+pJF+gBTSc7UZR0U2fkmDRWjSDzrPggkMPkVUZMkimOnPQ3w==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.7"
+
+"@fortawesome/free-solid-svg-icons@^5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.4.2.tgz#185fdab8806d5726846719dd7f8a2756c7b4f7fe"
+  integrity sha512-emie9CsLZPLVPH1adR3MNGNlm0GSVvEuUbZkQr0uXSp+Q9SZL0/OF6ava3DCKkwDbjn3jDKPchOraj0Vkuat6Q==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.7"
+
 "@material/animation@^0.1.4":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@material/animation/-/animation-0.1.5.tgz#79c45ccdcde8a286a4c3d7955873b2079e4e5c32"
@@ -1127,6 +1141,13 @@ angular-in-memory-web-api@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/angular-in-memory-web-api/-/angular-in-memory-web-api-0.6.1.tgz#d1eb1849517fe60487c2287388606bf1c4f84dfb"
   integrity sha512-6Fls8XE3UC8NoydpcC82hY3KSRU4dXbGFjs3w+XLReL+Ry8zLeBHb/CZ9F+Kbg1yBH+eKamzd0vLr0+df+yC5g==
+
+angulartics2@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/angulartics2/-/angulartics2-7.0.2.tgz#b0e07375883b522a0059e8efb070603b122899df"
+  integrity sha512-+tjtTnTmcRkvE2tTura61oWpGQB80RSJdaXGXmsiaC+F0UH0Ozckr2Y6AzhFA1T4XdKquo5Fqpa3LYtwxjsixA==
+  dependencies:
+    tslib "^1.9.0"
 
 ansi-colors@^3.0.0:
   version "3.2.1"

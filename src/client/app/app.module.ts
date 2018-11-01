@@ -8,6 +8,9 @@ import { MatToolbarModule, MatProgressBarModule, MatDialogModule } from '@angula
 import { RouterModule, Routes } from '@angular/router';
 import localeNLBE from '@angular/common/locales/nl-BE';
 import { DragScrollModule } from 'ngx-drag-scroll';
+import { Angulartics2Module } from 'angulartics2';
+import { Angulartics2GoogleGlobalSiteTag } from 'angulartics2/gst';
+import { Angulartics2Facebook } from 'angulartics2/facebook';
 
 import { AppErrorHandler } from './app-error-handler';
 import { AppComponent } from './app.component';
@@ -20,6 +23,7 @@ import { TagService } from './tag.service';
 import { ReservationsModule } from './reservations/reservations.module';
 import { ReservationsComponent } from './reservations/reservations.component';
 import { OrderStatusComponent } from './reservations/order-status.component';
+import { Angulartics2GoogleAnalytics } from 'angulartics2/ga/ga';
 
 registerLocaleData(localeNLBE);
 
@@ -61,6 +65,7 @@ const appRoutes: Routes = [
     MatDialogModule,
 
     DragScrollModule,
+    Angulartics2Module.forRoot(),
 
     ReservationsModule
   ],

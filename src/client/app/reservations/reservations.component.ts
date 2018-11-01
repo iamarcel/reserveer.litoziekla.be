@@ -4,7 +4,8 @@ import { FormControl, FormBuilder, FormGroup, FormArray,
 import { MatSnackBar } from '@angular/material';
 
 import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { Angulartics2 } from 'angulartics2';
 
 import { Campaign } from '../../../models/campaign';
 import { Opportunity } from '../../../models/opportunity';
@@ -125,6 +126,7 @@ export class ReservationsComponent {
               private tagService: TagService,
               private logSerivce: LogService,
               private snackBar: MatSnackBar,
+              private angulartics: Angulartics2,
               public viewContainerRef: ViewContainerRef) {
 
     this.methods$ = reservationService.methods();
@@ -244,38 +246,43 @@ export class ReservationsComponent {
   }
 
   addTicket(ticket: Ticket) {
-    // Send to GTM
-    this.tagService.push({
-      'ecommerce': {
-        'currencyCode': 'EUR',
-        'add': {
-          'products': [{
-            'name': ticket.ticketType.Name,
-            'id': ticket.ticketType.Id,
-            'category': this.show.Name,
-            'price': ticket.ticketType.UnitPrice,
-            'amount': 1
-          }]
-        }
-      }
+    this.angulartics.eventTrack.next({
+      action: 'AddToCart',
+      properties: {
+        'content_ids': [ticket.ticketType.Id],
+        'content_name': ticket.ticketType.Name,
+        'content_type': 'ticket',
+        'currency': 'EUR',
+        'value': ticket.ticketType.UnitPrice
+      },
+    });
+
+    this.angulartics.eventTrack.next({
+      action: 'add_to_cart',
+      properties: {
+        'items': [{
+          'name': ticket.ticketType.Name,
+          'id': ticket.ticketType.Id,
+          'category': this.show.Name,
+          'price': ticket.ticketType.UnitPrice,
+          'quantity': 1
+        }]
+      },
     });
   }
 
   removeTicket(ticket: Ticket) {
-    // Send to GTM
-    this.tagService.push({
-      'ecommerce': {
-        'currencyCode': 'EUR',
-        'remove': {
-          'products': [{
-            'name': ticket.ticketType.Name,
-            'id': ticket.ticketType.Id,
-            'category': this.show.Name,
-            'price': ticket.ticketType.UnitPrice,
-            'amount': 1
-          }]
-        }
-      }
+    this.angulartics.eventTrack.next({
+      action: 'remove_from_cart',
+      properties: {
+        'items': [{
+          'name': ticket.ticketType.Name,
+          'id': ticket.ticketType.Id,
+          'category': this.show.Name,
+          'price': ticket.ticketType.UnitPrice,
+          'quantity': 1
+        }]
+      },
     });
   }
 
@@ -331,6 +338,31 @@ export class ReservationsComponent {
 
     this.loading++;
     this.submitting = true;
+
+    this.angulartics.eventTrack.next({
+      action: 'InitiateCheckout',
+      properties: {
+        'currency': 'EUR',
+        'value': this.reservation.getTotalPrice(),
+        'num_items': this.reservation.Tickets.length,
+      },
+    });
+
+    this.angulartics.eventTrack.next({
+      action: 'begin_checkout',
+      properties: {
+        'currency': 'EUR',
+        'value': this.reservation.getTotalPrice(),
+        'num_items': this.reservation.Tickets.length,
+        'items': this.reservation.Tickets.map(t => ({
+          'name': t.ticketType.Name,
+          'id': t.ticketType.Id,
+          'category': this.show.Name,
+          'price': t.ticketType.UnitPrice,
+          'quantity': 1
+        }))
+      },
+    })
 
     this.reservationService.put(this.reservation)
       .subscribe((result: any) => {

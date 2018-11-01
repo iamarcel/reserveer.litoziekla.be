@@ -1,9 +1,9 @@
-
-import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
-
-import {switchMap, map, share} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+
+import { combineLatest as observableCombineLatest, Observable } from 'rxjs';
+import { switchMap, map, share } from 'rxjs/operators';
+import { Angulartics2 } from 'angulartics2';
 
 import { Opportunity } from '../../../models/opportunity';
 import { Campaign } from '../../../models/campaign';
@@ -33,6 +33,7 @@ export class OrderStatusComponent implements OnInit {
     private router: Router,
     private service: ReservationService,
     private tagService: TagService,
+    private angulartics: Angulartics2,
   ) {}
 
   ngOnInit () {
@@ -68,7 +69,22 @@ export class OrderStatusComponent implements OnInit {
         return { message, code, icon };
       }));
 
-    this.reservation$.subscribe(x => this.service.trackPurchase(this.tagService, x));
+    this.reservation$.subscribe(x => {
+      if (x.opportunity.StageName !== 'Closed Won') {
+        return;
+      }
+
+      this.angulartics.eventTrack.next({
+        action: 'Purchase',
+        properties: {
+          'currency': 'EUR',
+          'value': x.opportunity.Amount,
+          'num_items': x.opportunity.TotalOpportunityQuantity,
+          'content_name': x.opportunity.Name,
+          'transaction_id': x.opportunity.Id,
+        },
+      });
+    });
   }
 
   processPayment (statusCode: PaymentStatusCode, reservationId: string) {
