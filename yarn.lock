@@ -3770,11 +3770,6 @@ hmac-drbg@^1.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
-hoek@^5.0.3:
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-5.0.4.tgz#0f7fa270a1cafeb364a4b2ddfaa33f864e4157da"
-  integrity sha512-Alr4ZQgoMlnere5FZJsIyfIjORBqZll5POhDsF4q64dPuJR6rNxXdDxtHSQq8OXRurhmx+PWYEE8bXRROY8h0w==
-
 hosted-git-info@^2.1.4, hosted-git-info@^2.6.0:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.7.1.tgz#97f236977bd6e125408930ff6de3eec6281ec047"
@@ -5365,12 +5360,12 @@ neo-async@^2.5.0:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
 
-ngx-drag-scroll@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-drag-scroll/-/ngx-drag-scroll-2.0.2.tgz#85f610d3093bf96b334368d8bb6645939c669747"
-  integrity sha512-RVziAu/a10ueNC0+sC0cYsUk/9dOBR/TtcxuKbRC55RYrLRvuxbSkb7hUFPVF2H472c5QKCI+j9fgl+9h+gNEg==
+ngx-drag-scroll@^8.0.0-beta.2:
+  version "8.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/ngx-drag-scroll/-/ngx-drag-scroll-8.0.0-beta.2.tgz#caa84f267b645e9d96d20edf9ac5e2ddf391a4f7"
+  integrity sha512-HRxcginx9HNO7Jv0MydvEkh2vmtPocu9GUqRgU5c0Q3vikDNXAcDv7KDjLK9kicmvfpXE+3rzuZeYln77/2CmA==
   dependencies:
-    hoek "^5.0.3"
+    tslib "^1.9.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

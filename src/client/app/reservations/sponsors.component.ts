@@ -1,33 +1,32 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from "@angular/core";
 
-import { Observable, interval } from 'rxjs';
-import { DragScrollComponent } from 'ngx-drag-scroll';
+import { Observable, interval } from "rxjs";
+import { DragScrollComponent } from "ngx-drag-scroll";
 
-import { Opportunity } from '../../../models/opportunity';
-import { CampaignService } from './campaign.service';
+import { Opportunity } from "../../../models/opportunity";
+import { CampaignService } from "./campaign.service";
 
 @Component({
-  selector: 'sponsors',
-  templateUrl: './sponsors.component.html',
-  styleUrls: ['./sponsors.component.scss']
+  selector: "sponsors",
+  templateUrl: "./sponsors.component.html",
+  styleUrls: ["./sponsors.component.scss"]
 })
 export class SponsorsComponent implements OnInit {
-
-  @ViewChild('sponsorNav', {
+  @ViewChild("sponsorNav", {
     read: DragScrollComponent
   })
   ds: DragScrollComponent;
 
   sponsors: Opportunity[];
+  paragraphRegex = /<\/?p>/gi;
 
-  constructor (private campaignService: CampaignService) {
-    campaignService.getSponsors()
-      .subscribe(sponsors => {
-        this.sponsors = sponsors;
-      }, console.error);
+  constructor(private campaignService: CampaignService) {
+    campaignService.getSponsors().subscribe(sponsors => {
+      this.sponsors = sponsors;
+    }, console.error);
   }
 
-  ngOnInit () {
+  ngOnInit() {
     interval(3000).subscribe(_ => {
       if (!this.sponsors) {
         return;
@@ -35,11 +34,10 @@ export class SponsorsComponent implements OnInit {
 
       // Width of an item is 28%, so the current index is the one but last item
       if (this.ds.currIndex >= this.sponsors.length - 3) {
-        this.ds.moveTo(0)
+        this.ds.moveTo(0);
       } else {
-        this.ds.moveRight()
+        this.ds.moveRight();
       }
-    })
+    });
   }
-
 }

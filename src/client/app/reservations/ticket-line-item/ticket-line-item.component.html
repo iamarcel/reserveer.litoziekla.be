@@ -1,7 +1,7 @@
 <div [formGroup]="form" class="ticket-line-item">
   <div>
     <span class="mdc-typography--body2">
-      {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":true }})
+      {{ ticket.ticketType.Name }} ({{ ticket.ticketType.UnitPrice | currency:"EUR":"symbol" }})
     </span>
     <p class="mdc-typography--body1"
        style="margin-top: 0;">

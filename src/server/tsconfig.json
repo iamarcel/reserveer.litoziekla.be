@@ -4,11 +4,13 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "rootDir": "..",
     "outDir": "build",
     "skipLibCheck": true,
     "sourceMap": false,
-    "target": "es5",
+    "target": "es6",
     "lib": [
       "es2017"
     ],
@@ -20,6 +22,6 @@
     "node_modules/**/*"
   ],
   "files": [
-    "server/index.ts"
+    "index.ts"
   ]
 }

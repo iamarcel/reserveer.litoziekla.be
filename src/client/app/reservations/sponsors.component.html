@@ -10,5 +10,5 @@
   [class.loading]="(!sponsors || sponsors.length <= 0)"
   class="new-sponsor-grid"
   #sponsorNav>
-  <div drag-scroll-item *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c" class="sponsor column"></div>
+  <div drag-scroll-item *ngFor="let sponsor of sponsors" [innerHTML]="sponsor.Logo__c.replace(paragraphRegex, '')" class="sponsor column"></div>
 </drag-scroll>

@@ -6,22 +6,20 @@
   },
   "private": true,
   "dependencies": {
-    "@akanass/rx-http-request": "^2.6.0",
-    "@types/jsforce": "^1.8.4",
+    "@akanass/rx-http-request": "^3.3.0",
+    "@types/jsforce": "^1.9.13",
     "@types/node": "^8.0.31",
-    "@types/rx-node": "0.0.4",
     "applicationinsights": "^1.0.0",
     "blueimp-md5": "^2.10.0",
     "body-parser": "^1.15.2",
     "core-js": "^2.5.1",
     "express": "^4.14.0",
-    "jsforce": "^1.7.1",
+    "jsforce": "^1.9.3",
     "mailchimp-api-v3": "^1.7.1",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
-    "ts-node": "1.2.1",
-    "typescript": ">=2.1.0 <2.4.0",
-    "zone.js": "^0.8.18"
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.43",
